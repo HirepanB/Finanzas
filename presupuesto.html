@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creación de Presupuesto</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        let itemCount = 2; // Contador para el número de ítem
+        let totalMonto = 0; // Monto total de la tabla
+        let montoAsignado = 0; // Monto asignado al presupuesto
+
+        function agregarFila() {
+            const tableBody = document.getElementById('categorias-body');
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td>${itemCount}</td>
+                <td><input type="text" name="descripcion" required></td>
+                <td><input type="number" name="monto" step="0.01" required oninput="actualizarTotal(this)"></td>
+            `;
+
+            tableBody.appendChild(newRow);
+            itemCount++; // Incrementar el contador después de agregar la fila
+            actualizarTotal();
+        }
+
+        function actualizarTotal(input) {
+            const montos = document.querySelectorAll('input[name="monto"]');
+            totalMonto = 0;
+            let isValid = true; // Variable para verificar si todos los montos son válidos
+
+            montos.forEach(montoInput => {
+                const montoValue = parseFloat(montoInput.value) || 0;
+                totalMonto += montoValue;
+
+                // Verificar si el monto es negativo o no es un número
+                if (montoValue < 0) {
+                    isValid = false; // Si hay un monto negativo, no es válido
+                }
+            });
+
+            const montoAsignarInput = document.getElementById('monto-asignar');
+            montoAsignado = parseFloat(montoAsignarInput.value) || 0;
+
+            // Verificar si el total excede el monto asignado
+            if (totalMonto > montoAsignado) {
+                alert("El monto total no puede superar el monto asignado al presupuesto.");
+                // Vaciar el campo que causó el problema
+                if (input) {
+                    input.value = ''; // Vaciar el campo
+                    input.focus(); // Enfocar en el campo
+                }
+            }
+        }
+
+        function validarFormulario() {
+            const nombrePresupuesto = document.getElementById('nombre-presupuesto').value;
+            const montoAsignado = document.getElementById('monto-asignar').value;
+
+            if (!nombrePresupuesto) {
+                alert("El nombre del presupuesto es obligatorio.");
+                return false;
+            }
+
+            if (isNaN(montoAsignado) || montoAsignado <= 0) {
+                alert("El monto asignado debe ser un número positivo.");
+                return false;
+            }
+
+            return true; // Si todo es válido
+        }
+
+        function mostrarMensajeExitoso() {
+            const mensaje = document.getElementById('mensaje-exitoso');
+            mensaje.style.display = 'block';
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
+                resetearFormulario(); // Restablece el formulario
+            }, 3000);
+        }
+
+        function resetearFormulario() {
+            document.getElementById('presupuesto-form').reset(); // Restablece los campos del formulario
+            const tableBody = document.getElementById('categorias-body');
+            tableBody.innerHTML = ''; // Limpia la tabla
+            itemCount = 1; // Reinicia el contador de ítems
+            agregarFila(); // Agrega una fila inicial
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html">Inicio</a></li>
+            <li><a href="gastos.html">Gastos</a></li>
+            <li><a href="educacion.html">Educación</a></li>
+            <li><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a href="inversiones.html">Inversiones</a></li>
+            <li><a href="deudas.html">Deudas</a></li>
+            <li><a href="adeudos.html">Adeudos</a></li>
+            <li><a href="ingresos.html ">Ingresos</a></li>
+            <li><a href="tarjetas.html">Tarjetas</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <!-- Columna izquierda -->
+        <aside class="sidebar">
+            <img src ="presupuesto.jpg" alt="Presupuesto" class="sidebar-image">
+            <p class="motivational-phrase">
+                "Un presupuesto es la forma más efectiva de controlar tus gastos y alcanzar tus metas financieras."
+            </p>
+            <img src="planificacion.jpg" alt="Planificación" class="sidebar-image">
+        </aside>
+
+        <!-- Sección principal -->
+        <main class="main-content">
+            <h2>Creación de Presupuesto</h2>
+            <!-- Mensaje de confirmación -->
+            <div id="mensaje-exitoso" style="display: none;">
+                ¡Presupuesto creado exitosamente!
+            </div>
+            
+            <form id="presupuesto-form" onsubmit="if (validarFormulario()) { mostrarMensajeExitoso(); } return false;">
+                <label for="nombre-presupuesto">Nombre del Presupuesto:</label>
+                <input type="text" id="nombre-presupuesto" name="nombre-presupuesto" required>
+                <br>
+                <label for="monto-asignar">Monto Asignado:</label>
+                <input type="number" id="monto-asignar" name="monto-asignar" step="0.01" required oninput="actualizarTotal()">
+                <br>
+                <h3>Detalles</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categorias-body">
+                        <tr>
+                            <td>1</td>
+                            <td><input type="text" name="descripcion" required></td>
+                            <td><input type="number" name="monto" step="0.01" required oninput="actualizarTotal(this)"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" onclick="agregarFila()">Agregar Fila</button>
+                <br>
+                <button type="submit">Crear Presupuesto</button>
+            </form>
+             <button onclick="window.location.href='visualizarPresupuestos.html';">Visualizar Presupuestos</button> 
+            <button onclick="window.location.href='main.html';">Regresar</button>
+        </main>
+    </div>
+</body>
+</html>

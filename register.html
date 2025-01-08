@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #mensaje-exitoso {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000; /* Asegura que esté por encima de otros elementos */
+        }
+    </style>
+</head>
+<body>
+    <h2>Registro</h2>
+    <form id="registration-form" onsubmit="handleSubmit(event);">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+        
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" id="apellidos" name="apellidos" required>
+        
+        <label for="telefono">Teléfono:</label>
+        <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{10}" title="Ingrese un número de teléfono válido (10 dígitos)">
+        
+        <label for="correo">Correo:</label>
+        <input type="email" id="correo" name="correo" required>
+        
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" name="contraseña" required>
+        
+        <button type="submit">Registrar</button>
+    </form>
+    <button onclick="window.location.href='index.html';">Regresar</button>
+
+    <div id="mensaje-exitoso">Registro exitoso. </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            // Aquí podrías agregar lógica para enviar los datos a un servidor
+            // o realizar otras acciones necesarias.
+
+            // Mostrar el mensaje de éxito
+            const mensaje = document.getElementById('mensaje-exitoso');
+            mensaje.style.display = 'block';
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
+                window.location.href = 'main.html'; // Redirige a la página principal
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

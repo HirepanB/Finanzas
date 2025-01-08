@@ -1,0 +1,16 @@
+{
+  "name": "true-writing-dam-ohtfd",
+  "productName": "true-writing-dam-ohtfd",
+  "description": "My Electron application description",
+  "keywords": [],
+  "main": "./main.js",
+  "version": "1.0.0",
+  "author": "theca",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "33.3.0"
+  }
+}

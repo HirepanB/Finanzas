@@ -1,0 +1,11 @@
+# Node.js modules
+node_modules/
+
+# Logs y archivos temporales
+*.log
+
+# Variables de entorno (si usas un archivo .env)
+*.env
+
+# Carpeta de salida de builds
+dist/

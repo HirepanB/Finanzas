@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversiones</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="main.html">Inicio</a></li>
+            <li><a href="gastos.html">Gastos</a></li>
+            <li><a href="educacion.html">Educación</a></li>
+            <li><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a href="inversiones.html">Inversiones</a></li>
+            <li><a href="deudas.html">Deudas</a></li>
+            <li><a href="adeudos.html">Adeudos</a></li>
+            <li><a href="ingresos.html">Ingresos</a></li>
+            <li><a href="tarjetas.html">Tarjetas</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <div class="izquierda">
+            <img src="inversion.png" alt="Inversión" class="imagen-inversion">
+            <p>Invertir es sembrar hoy para cosechar mañana</p>
+            <img src="inversionGatito.jpg" alt="Gatito Inversor" class="imagen-gatito">
+        </div>
+        <div class="derecha">
+            <h2>Crear Inversión</h2>
+            <p>Acá se crearán las inversiones</p>
+            <form id="crear-inversion">
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" required>
+                <button type="submit">Agregar Inversión</button>
+            </form>
+             <button onclick="window.location.href='visualizarInversiones.html';">Visualizar Inversiones</button> 
+        </div>
+    </div>
+</body>
+</html>

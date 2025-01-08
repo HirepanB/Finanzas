@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function mostrarMensajeExitoso(mensaje) {
+            alert(mensaje);
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html">Inicio</a></li>
+            <li><a href="gastos.html">Gastos</a></li>
+            <li><a href="educacion.html">Educación</a></li>
+            <li><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a href="inversiones.html">Inversiones</a></li>
+            <li><a href="deudas.html">Deudas</a></li>
+            <li><a href="adeudos.html">Adeudos</a></li>
+            <li><a href="ingresos.html">Ingresos</a></li>
+            <li><a href="tarjetas.html">Tarjetas</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Columna izquierda -->
+        <aside class="sidebar">
+            <img src="perfil.png" alt="Perfil" class="sidebar-image">
+        </aside>
+
+        <!-- Sección principal -->
+        <main class="main-content">
+            <h2>Perfil de Usuario</h2>
+            <div class="perfil-info">
+                <p><strong>Nombre:</
+                
+                <!---EJEMPLO DE UN NOMBRE-->
+                
+                <strong> Jessi Hz</p>
+                <button onclick="mostrarMensajeExitoso('Editando nombre...');">Editar</button>
+                
+                <p><strong>Correo:</strong> jessiuwu@poli.com</p>
+                <button onclick="mostrarMensajeExitoso('Editando correo...');">Editar</button>
+            </div>
+            <div class="button-container">
+                <button onclick="mostrarMensajeExitoso('Cambiando contraseña...');">Cambiar la Contraseña</button>
+                <button onclick="mostrarMensajeExitoso('Eliminando cuenta...');">Eliminar Cuenta</button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

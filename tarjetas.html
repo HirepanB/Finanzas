@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Tarjetas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function mostrarMensajeExitoso(event) {
+            event.preventDefault(); // Evita que el formulario se envíe realmente
+            const mensaje = document.getElementById('mensaje-exitoso');
+            
+            // Muestra el mensaje flotante
+            mensaje.style.display = 'block';
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
+            }, 3000);
+
+            // Limpia los campos del formulario
+            document.getElementById('tarjetas-form').reset();
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html">Inicio</a></li>
+            <li><a href="gastos.html">Gastos</a></li>
+            <li><a href="educacion.html">Educación</a></li>
+            <li><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a href="inversiones.html">Inversiones</a></li>
+            <li><a href="deudas.html">Deudas</a></li>
+            <li><a href="adeudos.html">Adeudos</a></li>
+            <li><a href="ingresos.html">Ingresos</a></li>
+            <li><a href="tarjetas.html">Tarjetas</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Columna izquierda -->
+        <aside class="sidebar">
+            <img src="tarjetas.png" alt="Tarjetas" class="sidebar-image">
+            <p class="motivational-phrase">
+                "La tarjeta no es deuda, es una herramienta: úsala sabiamente."
+            </p>
+            <img src="tarjetasGatito.jpg" alt="Gatito Tarjeta" class="sidebar-image">
+        </aside>
+
+        <!-- Sección principal -->
+        <main class="main-content">
+            <h2>Registro de Tarjetas de Crédito</h2>
+            <!-- Mensaje de confirmación -->
+            <div id="mensaje-exitoso" style="display: none;">
+                ¡Tarjeta registrada exitosamente!
+            </div>
+            
+            <form id="tarjetas-form" onsubmit="mostrarMensajeExitoso(event);">
+                <label for="nombre">Nombre de la Tarjeta:</label>
+                <input type="text" id="nombre" name="nombre" required>
+                
+                <label for="limite">Límite de Crédito:</label>
+                <input type="number" id="limite" name="limite" step="0.01" required>
+                
+                <label for="fecha-corte">Fecha de Corte:</label>
+                <input type="date" id="fecha-corte" name="fecha-corte" required>
+                
+                <label for="fecha-pago">Fecha de Pago:</label>
+                <input type="date" id="fecha-pago" name="fecha-pago" required>
+                
+                <button type="submit">Registrar Tarjeta de Crédito</button>
+                <button type="button" onclick="alert('Visualizando tarjetas...');">Visualizar Tarjetas</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Gastos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Columna izquierda: Filtros -->
+        <aside class="sidebar">
+            <h3>Filtros</h3>
+            <form id="filtros-form">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha">
+                
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria">
+                    <option value="">Todas</option>
+                    <option value="entretenimiento">Entretenimiento</option>
+                    <option value="salud">Salud</option>
+                    <option value="otro">Otros</option>
+                </select>
+                
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" step="0.01" placeholder="Monto máximo">
+                
+                <button type="submit">Aplicar Filtros</button>
+            </form>
+        </aside>
+
+        <!-- Columna derecha: Tabla de gastos -->
+        <main class="main-content">
+            <h2>Visualizar Gastos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí puedes agregar filas dinámicamente con JavaScript o PHP -->
+                    <tr>
+                        <td>Entretenimiento</td>
+                        <td>$50.00</td>
+                        <td>2023-10-01</td>
+                        <td>Cine</td>
+                        <td><button onclick="alert('Editando...');">Editar</button></td>
+                    </tr>
+                    <tr>
+                        <td>Salud</td>
+                        <td>$30.00</td>
+                        <td>2023-10-02</td>
+                        <td>Consulta médica</td>
+                        <td><button onclick="alert('Editando...');">Editar</button></td>
+                    </tr>
+                    <!-- Agrega más filas según sea necesario -->
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <div class="button-container">
+        <button onclick="window.location.href='gastos.html';">Regresar</button>
+        <button onclick="alert('Generando reporte...');">Generar Reporte</button>
+    </div>
+</body>
+</html>

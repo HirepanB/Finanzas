@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Gastos</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function validarMonto(input) {
+            const montoValue = parseFloat(input.value);
+            if (montoValue <= 0) {
+                alert("El monto debe ser un número positivo.");
+                input.value = ''; // Vaciar el campo
+                input.focus(); // Enfocar en el campo
+            }
+        }
+
+        function mostrarMensajeExitoso(event) {
+            event.preventDefault(); // Evita que el formulario se envíe realmente
+            const mensaje = document.getElementById('mensaje-exitoso');
+            
+            // Muestra el mensaje flotante
+            mensaje.style.display = 'block';
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
+            }, 3000);
+
+            // Limpia los campos del formulario
+            document.getElementById('gastos-form').reset();
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html">Inicio</a></li>
+            <li><a href="gastos.html">Gastos</a></li>
+            <li><a href="educacion.html">Educación</a></li>
+            <li><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a href="inversiones.html">Inversiones</a></li>
+            <li><a href="deudas.html">Deudas</a></li>
+            <li><a href="adeudos.html">Adeudos</a></li>
+            <li><a href="ingresos.html">Ingresos</a></li>
+            <li><a href="tarjetas.html">Tarjetas</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Columna izquierda -->
+        <aside class="sidebar">
+            <img src="gastos.jpg" alt="Gastos" class="sidebar-image">
+            <p class="motivational-phrase">
+                "Gastar no es perder, es redirigir energía a lo que valoramos. Que sea en lo que realmente importa."
+            </p>
+            <img src="registroGastos.jpg" alt="Registro Gastos" class="sidebar-image">
+        </aside>
+
+        <!-- Sección principal -->
+        <main class="main-content">
+            <h2>Registro de Gastos</h2>
+            <!-- Mensaje de confirmación -->
+            <div id="mensaje-exitoso" style="display: none;">
+                ¡Registro exitoso!
+            </div>
+            
+            <form id="gastos-form" onsubmit="mostrarMensajeExitoso(event);">
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" step="0.01" required oninput="validarMonto(this)">
+                <br>
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="entretenimiento">Entretenimiento</option>
+                    <option value="salud">Salud</option>
+                    <option value="otro">Agregar nueva...</option>
+                </select>
+                <br>
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+                <br>
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                <br>
+                <button type="submit">Registrar Gasto</button>
+            </form>
+           
+            <button onclick="window.location.href='visualizarGastos.html';">Visualizar Gastos</button> 
+        </main>
+    </div>
+</body>
+</html>

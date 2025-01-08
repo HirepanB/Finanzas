@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Ingresos</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function validarMonto(input) {
+            const montoValue = parseFloat(input.value);
+            if (montoValue <= 0) {
+                alert("El monto debe ser un número positivo.");
+                input.value = ''; // Vaciar el campo
+                input.focus(); // Enfocar en el campo
+            }
+        }
+
+        function mostrarMensajeExitoso(event) {
+            event.preventDefault(); // Evita que el formulario se envíe realmente
+            const mensaje = document.getElementById('mensaje-exitoso');
+            
+            // Muestra el mensaje flotante
+            mensaje.style.display = 'block';
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
+            }, 3000);
+
+            // Limpia los campos del formulario
+            document.getElementById('ingresos-form').reset();
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html">Inicio</a></li>
+            <li><a href="gastos.html">Gastos</a></li>
+            <li><a href="educacion.html">Educación</a></li>
+            <li><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a href="inversiones.html">Inversiones</a></li>
+            <li><a href="deudas.html">Deudas</a></li>
+            <li><a href="adeudos.html">Adeudos</a></li>
+            <li><a href="ingresos.html">Ingresos</a></li>
+            <li><a href="tarjetas.html">Tarjetas</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Columna izquierda -->
+        <aside class="sidebar">
+            <img src="ingresos.png" alt="Ingresos" class="sidebar-image">
+            <p class="motivational-phrase">
+                "Sumando esfuerzos, también sumamos ingresos."
+            </p>
+            <img src="ingresosGatito.jpg" alt="Gatito Ingreso" class="sidebar-image">
+        </aside>
+
+        <!-- Sección principal -->
+        <main class="main-content">
+            <h2>Registro de Ingresos</h2>
+            <!-- Mensaje de confirmación -->
+            <div id="mensaje-exitoso" style="display: none;">
+                ¡Ingreso registrado exitosamente!
+            </div>
+            
+            <form id="ingresos-form" onsubmit="mostrarMensajeExitoso(event);">
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" step="0.01" required oninput="validarMonto(this)">
+                
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="trabajo">Trabajo</option>
+                    <option value="renta">Renta</option>
+                    <option value="inversiones">Inversiones</option>
+                    <option value="otro">Otro</option>
+                </select>
+                
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+                
+                <label for="tipo">Tipo:</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="quincenal">Quincenal</option>
+                    <option value="mensual">Mensual</option>
+                    <option value="semanal">Semanal</option>
+                </select>
+                
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+                
+                <button type="submit">Registrar Ingreso</button>
+                <button type="button" onclick="alert('Visualizando ingresos...');">Visualizar Ingresos</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
