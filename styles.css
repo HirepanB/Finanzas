@@ -121,14 +121,21 @@ nav ul li a:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-right: 20px;
 }
-
-/* Imágenes en la barra lateral */
 .sidebar-image {
     max-width: 100%;
     height: auto;
     margin-bottom: 10px;
     border-radius: 8px;
+    width: 50%; /* Agrega este línea para reducir el ancho de la imagen */
+    height: 50%; /* Agrega este línea para reducir el alto de la imagen */
 }
+/* Imágenes en la barra lateral 
+.sidebar-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}*/
 
 /* Frase motivadora */
 .motivational-phrase {
