@@ -277,7 +277,7 @@ th {
 
 .derecha {
     width: 40%;
-  //background-color: #d098d6;--> /* Color morado claro */
+/*background-color: #d098d6;--> /* Color morado claro */
     padding: 20px;
     border-radius: 10px;
 }
@@ -288,4 +288,47 @@ th {
 
 .imagen-gatito {
     max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
+}
+
+/* Estilos específicos para la página de inicio de sesión */
+.container-login {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+}
+
+.login-form {
+    flex: 1;
+    max-width: 400px;
+    margin-right: 20px;
+    padding: 20px;
+    background-color: #ffffff; /* Fondo blanco para el formulario */
+    border: 2px solid #00509e; /* Borde azul */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+    flex: 1;
+    max-width: 50%;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Estilos para el mensaje de éxito */
+#mensaje-exitoso {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
 }
