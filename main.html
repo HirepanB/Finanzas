@@ -10,16 +10,65 @@
     <!-- Menú principal -->
     <nav>
         <ul>
-            <li><a href="main.html">Inicio</a></li>
-            <li><a href="gastos.html">Gastos</a></li>
-            <li><a href="educacion.html">Educación</a></li>
-            <li><a href="presupuesto.html">Presupuesto</a></li>
-            <li><a href="inversiones.html">Inversiones</a></li>
-            <li><a href="deudas.html">Deudas</a></li>
-            <li><a href="adeudos.html">Adeudos</a></li>
-            <li><a href="ingresos.html">Ingresos</a></li>
-            <li><a href="tarjetas.html">Tarjetas</a></li>
-            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="main.html"><img src="iconos/icono_inicio.png" alt="Inicio" class="menu-icon">Inicio</a></li>
+            <li>
+                <a href="#"><img src="iconos/icono_gastos.png" alt="Gastos" class="menu-icon">Gastos</a>
+                <ul class="submenu">
+                    <li><a href="gastos.html">Registrar gastos</a></li>
+                    <li><a href="visualizarGastos.html">Visualizar gastos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_educacion.png" alt="Educación" class="menu-icon">Educación</a>
+                <ul class="submenu">
+                    <li><a href="educacion.html">Artículos financieros</a></li>
+                    <li><a href="#">Videos financieros</a></li>
+                    <li><a href="#">Glosario financiero</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_presupuesto.png" alt="Presupuesto" class="menu-icon">Presupuesto</a>
+                <ul class="submenu">
+                    <li><a href="presupuesto.html">Crear presupuesto</a></li>
+                    <li><a href="#">Visualizar presupuesto</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_inversiones.png" alt="Inversiones" class="menu-icon">Inversiones</a>
+                <ul class="submenu">
+                    <li><a href="inversiones.html">Registro de inversiones</a></li>
+                    <li><a href="#">Visualizar inversiones</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_deudas.png" alt="Deudas" class="menu-icon">Deudas</a>
+                <ul class="submenu">
+                    <li><a href="deudas.html">Registrar deuda</a></li>
+                    <li><a href="#">Visualizar deudas</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_adeudos.png" alt="Adeudos" class="menu-icon">Adeudos</a>
+                <ul class="submenu">
+                    <li><a href="adeudos.html">Registrar adeudo</a></li>
+                    <li><a href="#">Visualizar adeudos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_ingresos.png" alt="Ingresos" class="menu-icon">Ingresos</a>
+                <ul class="submenu">
+                    <li><a href="ingresos.html">Registrar ingreso</a></li>
+                    <li><a href="#">Visualizar ingresos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_tarjetas.png" alt="Tarjetas" class="menu-icon">Tarjetas</a>
+                <ul class="submenu">
+                    <li><a href="tarjetas.html">Registrar tarjeta</a></li>
+                    <li><a href="#">Visualizar tarjetas</a></li>
+                </ul>
+            </li>
+            <li><a href="perfil.html"><img src="iconos/icono_perfil.png" alt="Perfil" class="menu-icon">Perfil</a></li>
         </ul>
     </nav>
 
@@ -36,10 +85,11 @@
         <div id="welcome-message">
             <h2>Bienvenido de nuevo</h2>
             <p>¿Qué deseas revisar hoy?</p>
-            
+
             <aside class="sidebar">
             <img src="gatitoMain.jpg" alt="Gatito" class="gatito-image">
             </aside>
+            <img src="imagenes/gatitoMain.png" alt="Gatito" class="gatito-image">
             <p>¿Deseas generar algún reporte?</p>
             <div class="report-buttons">
                 <button onclick="alert('Resumen mensual generado');">Resumen Mensual</button>

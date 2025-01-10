@@ -297,6 +297,52 @@ th {
     max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
 }
 
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background-color: #00509e; /* Color de fondo del menú */
+}
+
+nav ul li {
+    position: relative; /* Necesario para el posicionamiento del submenu */
+}
+
+nav ul li a {
+    display: block;
+    padding: 10px 15px;
+    color: white; /* Color del texto */
+    text-decoration: none;
+}
+
+nav ul li:hover > a {
+    background-color: #0074d9; /* Color al pasar el ratón */
+}
+
+.submenu {
+    display: none; /* Oculta el submenu por defecto */
+    position: absolute; /* Posiciona el submenu */
+    left: 0;
+    top: 100%; /* Coloca el submenu justo debajo del elemento padre */
+    background-color: #00509e; /* Color de fondo del submenu */
+    z-index: 1000; /* Asegura que el submenu esté por encima de otros elementos */
+}
+
+nav ul li:hover .submenu {
+    display: block; /* Muestra el submenu al pasar el ratón */
+}
+
+.submenu li a {
+    padding: 10px 20px; /* Espaciado del submenu */
+}
+
+.menu-icon {
+    width: 20px; /* Ajusta el tamaño del ícono */
+    height: 20px; /* Ajusta el tamaño del ícono */
+    vertical-align: middle; /* Alinea el ícono verticalmente con el texto */
+    margin-right: 5px; /* Espacio entre el ícono y el texto */
+}
+
 /* Estilos específicos para la página de inicio de sesión */
 .container-login {
     display: flex;
