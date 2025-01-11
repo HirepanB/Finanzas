@@ -6,27 +6,38 @@
     <title>Registro</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        #mensaje-exitoso {
+        #mensaje-exitoso, #mensaje-error {
             display: none;
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #4CAF50; /* Verde */
-            color: white;
             padding: 15px;
             border-radius: 5px;
             z-index: 1000; /* Asegura que esté por encima de otros elementos */
+        }
+
+        #mensaje-exitoso {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+        }
+
+        #mensaje-error {
+            background-color: #F44336; /* Rojo */
+            color: white;
         }
     </style>
 </head>
 <body>
     <h2>Registro</h2>
-    <form id="registration-form" onsubmit="handleSubmit(event);">
+    <form id="registration-form">
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" name="nombre" required>
         
-        <label for="apellidos">Apellidos:</label>
-        <input type="text" id="apellidos" name="apellidos" required>
+        <label for="apellidoPaterno">Apellido Paterno:</label>
+        <input type="text" id="apellidoPaterno" name="apellidoPaterno" required>
+        
+        <label for="apellidoMaterno">Apellido Materno:</label>
+        <input type="text" id="apellidoMaterno" name="apellidoMaterno" required>
         
         <label for="telefono">Teléfono:</label>
         <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{10}" title="Ingrese un número de teléfono válido (10 dígitos)">
@@ -41,22 +52,51 @@
     </form>
     <button onclick="window.location.href='index.html';">Regresar</button>
 
-    <div id="mensaje-exitoso">Registro exitoso. </div>
+    <div id="mensaje-exitoso">Registro exitoso.</div>
+    <div id="mensaje-error">Error al registrar el usuario.</div>
 
     <script>
-        function handleSubmit(event) {
-            event.preventDefault();
-            // Aquí podrías agregar lógica para enviar los datos a un servidor
-            // o realizar otras acciones necesarias.
+        const { ipcRenderer } = require('electron');
 
-            // Mostrar el mensaje de éxito
-            const mensaje = document.getElementById('mensaje-exitoso');
-            mensaje.style.display = 'block';
-            setTimeout(() => {
-                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
-                window.location.href = 'main.html'; // Redirige a la página principal
-            }, 3000);
-        }
+        // Manejar el envío del formulario
+        document.getElementById('registration-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            // Obtener los valores del formulario
+            const userData = {
+                nombre: document.getElementById('nombre').value,
+                apellidoPaterno: document.getElementById('apellidoPaterno').value,
+                apellidoMaterno: document.getElementById('apellidoMaterno').value,
+                telefono: document.getElementById('telefono').value,
+                correo: document.getElementById('correo').value,
+                contraseña: document.getElementById('contraseña').value,
+            };
+
+            // Enviar los datos al proceso principal
+            ipcRenderer.send('register-user', userData);
+
+            // Escuchar la respuesta del proceso principal
+            ipcRenderer.once('register-response', (event, response) => {
+                const mensajeExitoso = document.getElementById('mensaje-exitoso');
+                const mensajeError = document.getElementById('mensaje-error');
+
+                if (response.success) {
+                    // Mostrar mensaje de éxito
+                    mensajeExitoso.style.display = 'block';
+                    setTimeout(() => {
+                        mensajeExitoso.style.display = 'none';
+                        window.location.href = 'index.html'; // Redirigir a la página principal
+                    }, 3000);
+                } else {
+                    // Mostrar mensaje de error
+                    mensajeError.textContent = `Error: ${response.message}`;
+                    mensajeError.style.display = 'block';
+                    setTimeout(() => {
+                        mensajeError.style.display = 'none';
+                    }, 5000);
+                }
+            });
+        });
     </script>
 </body>
 </html>

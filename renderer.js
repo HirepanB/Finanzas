@@ -1,7 +1,41 @@
-/**
- * This file is loaded via the <script> tag in the index.html file and will
- * be executed in the renderer process for that window. No Node.js APIs are
- * available in this process because `nodeIntegration` is turned off and
- * `contextIsolation` is turned on. Use the contextBridge API in `preload.js`
- * to expose Node.js functionality from the main process.
- */
+const { ipcRenderer } = require('electron');
+
+// Registro de usuario
+document.getElementById('register-button').addEventListener('click', () => {
+    const userData = {
+        nombre: document.getElementById('nombre').value,
+        apellidoPaterno: document.getElementById('apellidoPaterno').value,
+        apellidoMaterno: document.getElementById('apellidoMaterno').value,
+        correo: document.getElementById('correo').value,
+        contraseña: document.getElementById('contraseña').value,
+        telefono: document.getElementById('telefono').value,
+    };
+
+    ipcRenderer.send('register-user', userData);
+
+    ipcRenderer.once('register-response', (event, response) => {
+        if (response.success) {
+            alert('Usuario registrado con éxito');
+        } else {
+            alert(`Error: ${response.message}`);
+        }
+    });
+});
+
+// Login de usuario
+document.getElementById('login-button').addEventListener('click', () => {
+    const loginData = {
+        correo: document.getElementById('login-correo').value,
+        contraseña: document.getElementById('login-contraseña').value,
+    };
+
+    ipcRenderer.send('login-user', loginData);
+
+    ipcRenderer.once('login-response', (event, response) => {
+        if (response.success) {
+            alert('Inicio de sesión exitoso');
+        } else {
+            alert(`Error: ${response.message}`);
+        }
+    });
+});

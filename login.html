@@ -5,13 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de Sesión</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        #mensaje-exitoso, #mensaje-error {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000; /* Asegura que esté por encima de otros elementos */
+        }
+
+        #mensaje-exitoso {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+        }
+
+        #mensaje-error {
+            background-color: #F44336; /* Rojo */
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="container-login">
         <!-- Columna izquierda: Formulario de inicio de sesión -->
         <div class="login-form">
             <h2>Inicio de Sesión</h2>
-            <form id="login-form" onsubmit="handleLogin(event);">
+            <form id="login-form">
                 <label for="email">Correo:</label>
                 <input type="email" id="email" name="email" required>
                 
@@ -23,7 +44,8 @@
             <button onclick="window.location.href='index.html';">Regresar</button>
             <p><a href="recuperar_contrasena.html">¿Olvidaste tu contraseña?</a></p>
 
-            <div id="mensaje-exitoso">Inicio de sesión exitoso. </div>
+            <div id="mensaje-exitoso">Inicio de sesión exitoso.</div>
+            <div id="mensaje-error">Credenciales incorrectas.</div>
         </div>
 
         <!-- Columna derecha: Imagen -->
@@ -33,19 +55,43 @@
     </div>
 
     <script>
-        function handleLogin(event) {
-            event.preventDefault();
-            // Aquí podrías agregar lógica para verificar las credenciales del usuario
-            // o realizar otras acciones necesarias.
+        const { ipcRenderer } = require('electron');
 
-            // Mostrar el mensaje de éxito
-            const mensaje = document.getElementById('mensaje-exitoso');
-            mensaje.style.display = 'block';
-            setTimeout(() => {
-                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
-                window.location.href = 'main.html'; // Redirige a la página principal
-            }, 3000);
-        }
+        // Manejar el envío del formulario de login
+        document.getElementById('login-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            // Obtener los valores del formulario
+            const loginData = {
+                correo: document.getElementById('email').value,
+                contraseña: document.getElementById('password').value,
+            };
+
+            // Enviar las credenciales al proceso principal
+            ipcRenderer.send('login-user', loginData);
+
+            // Escuchar la respuesta del proceso principal
+            ipcRenderer.once('login-response', (event, response) => {
+                const mensajeExitoso = document.getElementById('mensaje-exitoso');
+                const mensajeError = document.getElementById('mensaje-error');
+
+                if (response.success) {
+                    // Mostrar mensaje de éxito
+                    mensajeExitoso.style.display = 'block';
+                    setTimeout(() => {
+                        mensajeExitoso.style.display = 'none';
+                        window.location.href = 'main.html'; // Redirigir a la página principal
+                    }, 3000);
+                } else {
+                    // Mostrar mensaje de error
+                    mensajeError.textContent = `Error: ${response.message}`;
+                    mensajeError.style.display = 'block';
+                    setTimeout(() => {
+                        mensajeError.style.display = 'none';
+                    }, 5000);
+                }
+            });
+        });
     </script>
 </body>
 </html>
