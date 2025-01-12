@@ -5,96 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizar Gastos</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Cargar los gastos del usuario al cargar la página
+        window.onload = () => {
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para visualizar tus gastos.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            cargarGastos(user.id_usuario);
+
+            // Manejar el envío de filtros
+            document.getElementById('filtros-form').addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const filtros = {
+                    id_usuario: user.id_usuario,
+                    categoria: document.getElementById('categoria').value === 'todos' ? null : document.getElementById('categoria').value,
+                    fecha: document.getElementById('fecha').value || null,
+                    monto: parseFloat(document.getElementById('monto').value) || null,
+                };
+
+                cargarGastos(user.id_usuario, filtros);
+            });
+        };
+
+        // Función para cargar los gastos desde el backend
+        function cargarGastos(id_usuario, filtros = {}) {
+            filtros.id_usuario = id_usuario; // Asegurar que el filtro incluye el usuario autenticado
+            console.log('Cargando gastos con filtros:', filtros); // Depuración
+
+            ipcRenderer.send('get-gastos', filtros);
+
+            ipcRenderer.once('get-gastos-response', (event, response) => {
+                console.log('Respuesta del backend:', response); // Depuración
+                if (response.success) {
+                    mostrarGastos(response.data);
+                } else {
+                    alert(`Error: ${response.message}`);
+                }
+            });
+        }
+
+        // Función para mostrar los gastos en la tabla
+        function mostrarGastos(gastos) {
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = ''; // Limpiar la tabla
+
+            if (gastos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No se encontraron gastos.</td></tr>`;
+                return;
+            }
+
+            gastos.forEach(gasto => {
+                const row = `
+                    <tr>
+                        <td>${gasto.categoria}</td>
+                        <td>$${gasto.monto.toFixed(2)}</td>
+                        <td>${gasto.fecha}</td>
+                        <td>${gasto.descripcion}</td>
+                        <td>
+                            <button class="editar-btn" onclick="editarGasto(${gasto.id_gasto})">
+                                <img src="iconos/editar.png" alt="Editar">
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Función para editar un gasto (pendiente de implementar)
+        function editarGasto(id_gasto) {
+            alert(`Editar gasto con ID: ${id_gasto}`);
+            // Aquí puedes redirigir a una página de edición o abrir un modal
+        }
+    </script>
 </head>
 <body>
-
     <nav>
         <ul>
             <li><a href="main.html"><img src="iconos/icono_inicio.png" alt="Inicio" class="menu-icon">Inicio</a></li>
-            <li>
-                <a href="#"><img src="iconos/icono_gastos.png" alt="Gastos" class="menu-icon">Gastos</a>
-                <ul class="submenu">
-                    <li><a href="gastos.html">Registrar gastos</a></li>
-                    <li><a href="visualizarGastos.html">Visualizar gastos</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><img src="iconos/icono_educacion.png" alt="Educación" class="menu-icon">Educación</a>
-                <ul class="submenu">
-                    <li><a href="educacion.html">Artículos financieros</a></li>
-                    <li><a href="videosedu.html">Videos financieros</a></li>
-                    <li><a href="glosarioedu.html">Glosario financiero</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><img src="iconos/icono_presupuesto.png" alt="Presupuesto" class="menu-icon">Presupuesto</a>
-                <ul class="submenu">
-                    <li><a href="presupuesto.html">Crear presupuesto</a></li>
-                    <li><a href="visualizarPresupuesto.html">Visualizar presupuesto</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><img src="iconos/icono_inversiones.png" alt="Inversiones" class="menu-icon">Inversiones</a>
-                <ul class="submenu">
-                    <li><a href="inversiones.html">Registro de inversiones</a></li>
-                    <li><a href="visualizarInversiones.html">Visualizar inversiones</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><img src="iconos/icono_deudas.png" alt="Deudas" class="menu-icon">Deudas</a>
-                <ul class="submenu">
-                    <li><a href="deudas.html">Registrar deuda</a></li>
-                    <li><a href="visualizarDeudas.html">Visualizar deudas</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><img src="iconos/icono_adeudos.png" alt="Adeudos" class="menu-icon">Adeudos</a>
-                <ul class="submenu">
-                    <li><a href="adeudos.html">Registrar adeudo</a></li>
-                    <li><a href="visualizarAdeudos.html">Visualizar adeudos</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><img src="iconos/icono_ingresos.png" alt="Ingresos" class="menu-icon">Ingresos</a>
-                <ul class="submenu">
-                    <li><a href="ingresos.html">Registrar ingreso</a></li>
-                    <li><a href="visualizarIngresos.html">Visualizar ingresos</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><img src="iconos/icono_tarjetas.png" alt="Tarjetas" class="menu-icon">Tarjetas</a>
-                <ul class="submenu">
-                    <li><a href="tarjetas.html">Registrar tarjeta</a></li>
-                    <li><a href="registrarPagot.html">Registrar pago con tarjeta</a></li>
-                    <li><a href="visualizarTarjetas.html">Visualizar tarjetas</a></li>
-                </ul>
-            </li>
-            <li><a href="perfil.html"><img src="iconos/icono_perfil.png" alt="Perfil" class="menu-icon">Perfil</a></li>
+            <li><a href="gastos.html">Registrar gastos</a></li>
+            <li><a href="visualizarGastos.html">Visualizar gastos</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <!-- Columna izquierda: Filtros -->
-<!-- Columna izquierda: Filtros -->
-<aside class="sidebar">
-    <h3 style="color: #00509e;">Filtros</h3>
-    <form id="filtros ">
-        <label for="categoria">Categoría:</label>
-        <select id="categoria" name="categoria">
-            <option value="todos">Todos</option>
-            <option value="entretenimiento">Entretenimiento</option>
-            <option value="salud">Salud</option>
-        </select>
+        <aside class="sidebar">
+            <h3 style="color: #00509e;">Filtros</h3>
+            <form id="filtros-form">
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria">
+                    <option value="todos">Todos</option>
+                    <option value="1">Entretenimiento</option>
+                    <option value="2">Salud</option>
+                </select>
 
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha">
 
-        <label for="monto">Monto:</label>
-        <input type="number" id="monto" name="monto" step="0.01" placeholder="Ingrese un monto mínimo">
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" step="0.01" placeholder="Ingrese un monto mínimo">
 
-        <button type="submit">Aplicar Filtros</button>
-    </form>
-</aside>
+                <button type="submit">Aplicar Filtros</button>
+            </form>
+        </aside>
 
         <!-- Columna derecha: Visualización de gastos -->
         <main class="main-content">
@@ -102,7 +123,6 @@
             <table>
                 <thead>
                     <tr>
-                        
                         <th>Categoría</th>
                         <th>Monto</th>
                         <th>Fecha</th>
@@ -111,26 +131,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>    
-                        <td>Salud</td> 
-                        <td>$50</td>
-                        <td>2023-03-01</td>
-                        <td>Compra de supermercado</td>
-
-                        <td>
-                            <button class="editar-btn">
-                                <img src="iconos/editar.png" alt="Editar">
-                            </button>
-                        </td>
-                    </tr>
-                    <!-- Más filas de gastos -->
+                    <!-- Filas de gastos se insertarán dinámicamente aquí -->
                 </tbody>
             </table>
         </main>
     </div>
 
     <div class="button-container">
-       <!---- <button onclick="window.location.href='gastos.html';">Regresar</button>--->
         <button onclick="alert('Generando reporte...');">Generar Reporte</button>
     </div>
 </body>

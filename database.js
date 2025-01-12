@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const { createDB } = require('./createDB.js');
+const bcrypt = require('bcrypt');
 
 // Crear o abrir la base de datos
 const db = new sqlite3.Database('./finanzas.db', (err) => {
@@ -7,34 +8,28 @@ const db = new sqlite3.Database('./finanzas.db', (err) => {
         console.error('Error al conectar con la base de datos:', err.message);
     } else {
         console.log('Conexión exitosa a SQLite.');
+        createDB(db); // Crear las tablas si no existen
     }
 });
 
-// Crear la tabla "usuarios" si no existe
-createDB(db);
-
 // Función para registrar un usuario
-const bcrypt = require('bcrypt');
-
 function registerUser(data, callback) {
     const sql = `
         INSERT INTO usuarios (nombre, apellidoPaterno, apellidoMaterno, correo, contraseña, telefono)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    // Generar un hash de la contraseña
     bcrypt.hash(data.contraseña, 10, (err, hash) => {
         if (err) {
             console.error('Error al generar el hash:', err.message);
             callback(false, 'Error interno del servidor');
         } else {
-            // Guardar la contraseña hasheada en la base de datos
             db.run(sql, [
                 data.nombre,
                 data.apellidoPaterno,
                 data.apellidoMaterno,
                 data.correo,
-                hash, // Guardar el hash en lugar de la contraseña
+                hash,
                 data.telefono,
             ], function (err) {
                 if (err) {
@@ -58,7 +53,6 @@ function loginUser(correo, contraseña, callback) {
             console.error('Error al buscar el usuario:', err.message);
             callback(false, err.message);
         } else if (row) {
-            // Comparar la contraseña ingresada con el hash almacenado
             bcrypt.compare(contraseña, row.contraseña, (err, result) => {
                 if (result) {
                     console.log('Login exitoso:', row);
@@ -75,5 +69,66 @@ function loginUser(correo, contraseña, callback) {
     });
 }
 
+// Función para registrar un gasto
+function registerGasto(data, callback) {
+    const sql = `
+        INSERT INTO Gastos (id_usuario, monto, fecha, descripcion, id_categoria)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    db.run(sql, [
+        data.id_usuario,
+        data.monto,
+        data.fecha,
+        data.descripcion,
+        data.id_categoria
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar el gasto:', err.message);
+            callback(false, err.message);
+        } else {
+            console.log('Gasto registrado con éxito, ID:', this.lastID);
+            callback(true, 'Gasto registrado con éxito');
+        }
+    });
+}
+
+// Función para obtener gastos con filtros
+function getGastos(filtros, callback) {
+    let sql = `
+        SELECT G.id_gasto, G.monto, G.fecha, G.descripcion, C.nombreCategoria AS categoria
+        FROM Gastos G
+        JOIN Categorias C ON G.id_categoria = C.id_categoria
+        WHERE G.id_usuario = ?
+    `;
+    const params = [filtros.id_usuario];
+
+    // Aplicar filtros opcionales
+    if (filtros.categoria && filtros.categoria !== 'todos') {
+        sql += ' AND G.id_categoria = ?';
+        params.push(filtros.categoria);
+    }
+    if (filtros.fecha) {
+        sql += ' AND G.fecha = ?';
+        params.push(filtros.fecha);
+    }
+    if (filtros.monto) {
+        sql += ' AND G.monto >= ?';
+        params.push(filtros.monto);
+    }
+
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los gastos:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'Gastos obtenidos con éxito');
+        }
+    });
+}
+
 // Exportar las funciones y la base de datos
-module.exports = { db, registerUser, loginUser };
+module.exports = { db, registerUser, loginUser, registerGasto, getGastos };

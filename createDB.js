@@ -1,7 +1,31 @@
-function createDB(db){
-
-    // Crear la tabla "usuarios" si no existe
+function createDB(db) {
     db.exec(`
+        CREATE TABLE IF NOT EXISTS Usuarios (
+            id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            apellidoPaterno TEXT NOT NULL,
+            apellidoMaterno TEXT NOT NULL,
+            correo TEXT NOT NULL,
+            contrasena TEXT NOT NULL,
+            telefono TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Categorias (
+            id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombreCategoria TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Gastos (
+            id_gasto INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_usuario INTEGER NOT NULL,
+            monto REAL NOT NULL,
+            fecha TEXT NOT NULL,
+            descripcion TEXT,
+            id_categoria INTEGER NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+            FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria)
+        );
+
         CREATE TABLE IF NOT EXISTS Adeudos (
             id_adeudo INTEGER PRIMARY KEY AUTOINCREMENT,
             id_usuario INTEGER NOT NULL,
@@ -10,12 +34,21 @@ function createDB(db){
             monto REAL NOT NULL,
             vencimiento TEXT NOT NULL,
             estado TEXT NOT NULL,
-            id_categoria INTEGER NOT NULL
+            id_categoria INTEGER NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+            FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria)
         );
 
-        CREATE TABLE IF NOT EXISTS Categorias (
-            id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombreCategoria TEXT NOT NULL
+        CREATE TABLE IF NOT EXISTS Ingresos (
+            id_ingreso INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_usuario INTEGER NOT NULL,
+            monto REAL NOT NULL,
+            descripcion TEXT,
+            fechaIngreso TEXT NOT NULL,
+            fuente TEXT NOT NULL,
+            id_categoria INTEGER NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+            FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria)
         );
 
         CREATE TABLE IF NOT EXISTS Deudas (
@@ -27,26 +60,9 @@ function createDB(db){
             descripcion TEXT,
             estado TEXT NOT NULL,
             acreedor TEXT NOT NULL,
-            id_categoria INTEGER NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS Gastos (
-            id_gasto INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_usuario INTEGER NOT NULL,
-            monto REAL NOT NULL,
-            fecha TEXT NOT NULL,
-            descripcion TEXT,
-            id_categoria INTEGER NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS Ingresos (
-            id_ingreso INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_usuario INTEGER NOT NULL,
-            monto REAL NOT NULL,
-            descripcion TEXT,
-            fechaIngreso TEXT NOT NULL,
-            fuente TEXT NOT NULL,
-            id_categoria INTEGER NOT NULL
+            id_categoria INTEGER NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+            FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria)
         );
 
         CREATE TABLE IF NOT EXISTS Inversiones (
@@ -57,26 +73,8 @@ function createDB(db){
             fechaInicio TEXT NOT NULL,
             estado TEXT NOT NULL,
             descripcion TEXT,
-            rendimiento REAL NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS PagosTarjeta (
-            id_pagoTarjeta INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_tarjeta INTEGER NOT NULL,
-            monto REAL NOT NULL,
-            acreedor TEXT NOT NULL,
-            plazoPago TEXT NOT NULL,
-            descripcion TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS Presupuestos (
-            id_presupuestos INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_usuario INTEGER NOT NULL,
-            montoAsignado REAL NOT NULL,
-            periodo TEXT NOT NULL,
-            estado TEXT NOT NULL,
-            descripcion TEXT,
-            id_categoria INTEGER NOT NULL
+            rendimiento REAL NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
         );
 
         CREATE TABLE IF NOT EXISTS Tarjetas (
@@ -89,26 +87,51 @@ function createDB(db){
             estado TEXT NOT NULL,
             descripcion TEXT,
             fechaExpiracion TEXT NOT NULL,
-            tipoTarjeta TEXT NOT NULL
+            tipoTarjeta TEXT NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
         );
 
-        CREATE TABLE IF NOT EXISTS Usuarios (
-            id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            apellidoPaterno TEXT NOT NULL,
-            apellidoMaterno TEXT NOT NULL,
-            correo TEXT NOT NULL,
-            contrasena TEXT NOT NULL,
-            telefono TEXT NOT NULL
+        CREATE TABLE IF NOT EXISTS Presupuestos (
+            id_presupuestos INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_usuario INTEGER NOT NULL,
+            montoAsignado REAL NOT NULL,
+            periodo TEXT NOT NULL,
+            estado TEXT NOT NULL,
+            descripcion TEXT,
+            id_categoria INTEGER NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+            FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria)
+        );
+
+        CREATE TABLE IF NOT EXISTS PagosTarjeta (
+            id_pagoTarjeta INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_tarjeta INTEGER NOT NULL,
+            monto REAL NOT NULL,
+            acreedor TEXT NOT NULL,
+            plazoPago TEXT NOT NULL,
+            descripcion TEXT,
+            FOREIGN KEY (id_tarjeta) REFERENCES Tarjetas(id_tarjeta)
         );
     `, (err) => {
         if (err) {
             console.error('Error al crear las tablas:', err.message);
         } else {
-            console.log('Tablas creadas con exito');
+            console.log('Tablas creadas con éxito.');
+            // Insertar categorías iniciales
+            db.run(`
+                INSERT OR IGNORE INTO Categorias (id_categoria, nombreCategoria) VALUES 
+                (1, 'Entretenimiento'), 
+                (2, 'Salud'), 
+                (3, 'Otro');
+            `, (err) => {
+                if (err) {
+                    console.error('Error al insertar categorías iniciales:', err.message);
+                } else {
+                    console.log('Categorías iniciales insertadas.');
+                }
+            });
         }
     });
-
 }
 
 module.exports = { createDB };
