@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Tarjetas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function mostrarMensajeExitoso(event) {
+            event.preventDefault(); // Evita que el formulario se envíe realmente
+            const mensaje = document.getElementById('mensaje-exitoso');
+            
+            // Muestra el mensaje flotante
+            mensaje.style.display = 'block';
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
+            }, 3000);
+
+            // Limpia los campos del formulario
+            document.getElementById('tarjetas-form').reset();
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html"><img src="iconos/icono_inicio.png" alt="Inicio" class="menu-icon">Inicio</a></li>
+            <li>
+                <a href="#"><img src="iconos/icono_gastos.png" alt="Gastos" class="menu-icon">Gastos</a>
+                <ul class="submenu">
+                    <li><a href="gastos.html">Registrar gastos</a></li>
+                    <li><a href="visualizarGastos.html">Visualizar gastos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_educacion.png" alt="Educación" class="menu-icon">Educación</a>
+                <ul class="submenu">
+                    <li><a href="educacion.html">Artículos financieros</a></li>
+                    <li><a href="videosedu.html">Videos financieros</a></li>
+                    <li><a href="glosarioedu.html">Glosario financiero</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_presupuesto.png" alt="Presupuesto" class="menu-icon">Presupuesto</a>
+                <ul class="submenu">
+                    <li><a href="presupuesto.html">Crear presupuesto</a></li>
+                    <li><a href="visualizarPresupuesto.html">Visualizar presupuesto</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_inversiones.png" alt="Inversiones" class="menu-icon">Inversiones</a>
+                <ul class="submenu">
+                    <li><a href="inversiones.html">Registro de inversiones</a></li>
+                    <li><a href="visualizarInversiones.html">Visualizar inversiones</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_deudas.png" alt="Deudas" class="menu-icon">Deudas</a>
+                <ul class="submenu">
+                    <li><a href="deudas.html">Registrar deuda</a></li>
+                    <li><a href="visualizarDeudas.html">Visualizar deudas</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_adeudos.png" alt="Adeudos" class="menu-icon">Adeudos</a>
+                <ul class="submenu">
+                    <li><a href="adeudos.html">Registrar adeudo</a></li>
+                    <li><a href="visualizarAdeudos.html">Visualizar adeudos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_ingresos.png" alt="Ingresos" class="menu-icon">Ingresos</a>
+                <ul class="submenu">
+                    <li><a href="ingresos.html">Registrar ingreso</a></li>
+                    <li><a href="visualizarIngresos.html">Visualizar ingresos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_tarjetas.png" alt="Tarjetas" class="menu-icon">Tarjetas</a>
+                <ul class="submenu">
+                    <li><a href="tarjetas.html">Registrar tarjeta</a></li>
+                    <li><a href="registrarPagot.html">Registrar pago con tarjeta</a></li>
+                    <li><a href="visualizarTarjetas.html">Visualizar tarjetas</a></li>
+                </ul>
+            </li>
+            <li><a href="perfil.html"><img src="iconos/icono_perfil.png" alt="Perfil" class="menu-icon">Perfil</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Columna izquierda -->
+        <aside class="sidebar">
+            <img src="iconos/icono_tarjetas.png" alt="Tarjetas" class="sidebar-image">
+            <p class="motivational-phrase">
+                "Este gasto es parte del plan: con tarjeta, pero siempre con conciencia."
+            </p>
+            <img src="imagenes/ptarjetasGatito.png" alt="Gatito Tarjeta" class="sidebar-image">
+        </aside>
+
+        <!-- Sección principal -->
+        <main class="main-content">
+            <h2>Registro de Pago con Tarjeta</h2>
+            <!-- Mensaje de confirmación -->
+            <div id="mensaje-exitoso" style="display: none;">
+                ¡Pago con tarjeta registrado exitosamente!
+            </div>
+            
+            <form id="pagot-form" onsubmit="mostrarMensajeExitoso(event)">
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" required>
+    
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="Entretenimiento">Entretenimiento</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Renta">Renta</option>
+                </select>
+    
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+    
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" required></textarea>
+    
+                <button type="submit">Registrar Pago</button>
+        </main>
+    </div>
+</body>
+</html>

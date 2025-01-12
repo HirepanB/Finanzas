@@ -82,7 +82,7 @@
 
                 <label for="categoria">Categoría:</label>
                 <select id="categoria" name="categoria">
-                    <option value="">Seleccione una categoría</option>
+                    <option value="">Todos</option>
                     <option value="trabajo">Trabajo</option>
                     <option value="renta">Renta</option>
                     <option value="inversiones">Inversiónes</option>
@@ -93,13 +93,13 @@
 
                 <label for="tipo">Tipo:</label>
                 <select id="tipo" name="tipo">
-                    <option value="">Seleccione un tipo</option>
+                    <option value="">Todos</option>
                     <option value="quincenal">Quincenal</option>
                     <option value="mensual">Mensual</option>
                     <option value="semanal">Semanal</option>
                 </select>
 
-                <button type="submit">Filtrar</button>
+                <button type="submit">Aplicar Filtros</button>
             </form>
         </aside>
 
@@ -144,6 +144,9 @@
             </table>
         </main>
     </div>
-
+    <div class="button-container">
+        <!---- <button onclick="window.location.href='gastos.html';">Regresar</button>--->
+         <button onclick="alert('Generando reporte...');">Generar Reporte</button>
+     </div>
 </body>
 </html>
