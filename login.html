@@ -78,6 +78,8 @@
                 if (response.success) {
                     // Mostrar mensaje de éxito
                     mensajeExitoso.style.display = 'block';
+                    console.log(response.user);
+                    window.sessionStorage.setItem("user",response.user);  //almacenar usuario logeado
                     setTimeout(() => {
                         mensajeExitoso.style.display = 'none';
                         window.location.href = 'main.html'; // Redirigir a la página principal

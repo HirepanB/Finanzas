@@ -9,3 +9,4 @@ node_modules/
 
 # Carpeta de salida de builds
 dist/
+finanzas.db

@@ -36,7 +36,7 @@ ipcMain.on('register-user', (event, userData) => {
 });
 
 ipcMain.on('login-user', (event, { correo, contraseña }) => {
-  loginUser(correo, contraseña, (success, message) => {
-    event.reply('login-response', { success, message }); // Responder al renderizador
+  loginUser(correo, contraseña, (success, message, user) => {
+    event.reply('login-response', { success, message, user }); // Responder al renderizador
   });
 });

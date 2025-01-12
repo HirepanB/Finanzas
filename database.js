@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const { createDB } = require('./createDB.js');
 
 // Crear o abrir la base de datos
 const db = new sqlite3.Database('./finanzas.db', (err) => {
@@ -10,25 +11,7 @@ const db = new sqlite3.Database('./finanzas.db', (err) => {
 });
 
 // Crear la tabla "usuarios" si no existe
-db.serialize(() => {
-    db.run(`
-        CREATE TABLE IF NOT EXISTS usuarios (
-            id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            apellidoPaterno TEXT NOT NULL,
-            apellidoMaterno TEXT NOT NULL,
-            correo TEXT NOT NULL UNIQUE,
-            contraseña TEXT NOT NULL,
-            telefono TEXT
-        )
-    `, (err) => {
-        if (err) {
-            console.error('Error al crear la tabla:', err.message);
-        } else {
-            console.log('Tabla "usuarios" creada o ya existe.');
-        }
-    });
-});
+createDB(db);
 
 // Función para registrar un usuario
 const bcrypt = require('bcrypt');
@@ -79,7 +62,7 @@ function loginUser(correo, contraseña, callback) {
             bcrypt.compare(contraseña, row.contraseña, (err, result) => {
                 if (result) {
                     console.log('Login exitoso:', row);
-                    callback(true, 'Login exitoso');
+                    callback(true, 'Login exitoso', JSON.stringify(row));
                 } else {
                     console.log('Contraseña incorrecta.');
                     callback(false, 'Correo o contraseña incorrectos');
