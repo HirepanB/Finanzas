@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Videos Financieros</title>
+    <title>Visualizar Adeudos</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -72,54 +72,75 @@
     </nav>
 
     <div class="container">
-        <!-- Columna izquierda -->
-        <aside class="sidebar">
-            <img src="iconos/icono_educacion.png" alt="Educación Financiera" class="sidebar-image">
-            <p class="motivational-phrase">
-                "Tus finanzas no tienen que ser un misterio. ¡Aprende a dominarlas hoy!"
-            </p>
-            <img src="imagenes/videosGatito.png" alt="Videos Gatito" class="sidebar-image">
-        </aside>
+        <!-- Columna izquierda: Filtros -->
+<!-- Columna izquierda: Filtros -->
+<aside class="sidebar">
+    <h3 style="color: #00509e;">Filtros</h3>
+    <form id="filtros ">
+        <label for="categoria">Categoría:</label>
+        <select id="categoria" name="categoria">
+            <option value="todos">Todos</option>
+            <option value="entretenimiento">Entretenimiento</option>
+            <option value="salud">Salud</option>
+            <option value="otro">Otro</option>
+        </select>
 
+        <label for="estado">Estado:</label>
+        <select id="estado" name="estado">
+            <option value="todos">Todos</option>
+            <option value="porPagar">Por Pagar</option>
+            <option value="pagada">Pagada</option>
+            <option value="atrasada">Atrasada</option>
+        </select>
 
-<!-- Sección principal -->
+        <button type="submit">Aplicar Filtros</button>
+    </form>
+</aside>
+
+<!-- Columna derecha: Tabla de Adeudos -->
 <main class="main-content">
-    <h2>Videos Financieros</h2>
-    <div class="videos-box">
-        <div class="videos-scroll">
-            <div class="videos-container">
-                <div class="video">
-                    <h3 class="video-titulo">Título del Video 1</h3>
-                    <p class="video-resumen">Resumen del video 1 que explica brevemente de qué trata y qué aprenderás.</p>
-                    <a href="link_video1.html" class="video-link">Ver Video</a>
-                </div>
-                <div class="video">
-                    <h3 class="video-titulo">Título del Video 2</h3>
-                    <p class="video-resumen">Resumen del video 2 que proporciona información útil sobre el tema.</p>
-                    <a href="link_video2.html" class="video-link">Ver Video</a>
-                </div>
-                <div class="video">
-                    <h3 class="video-titulo">Título del Video 3</h3>
-                    <p class="video-resumen">Resumen del video 3 que detalla los conceptos que se abordarán.</p>
-                    <a href="link_video3.html" class="video-link">Ver Video</a>
-                </div>
-                <div class="video">
-                    <h3 class="video-titulo">Título del Video 4</h3>
-                    <p class="video-resumen">Resumen del video 4 que ofrece consejos prácticos y estrategias.</p>
-                    <a href="link_video4.html" class="video-link">Ver Video</a>
-                </div>
-                <div class="video">
-                    <h3 class="video-titulo">Título del Video 5</h3>
-                    <p class="video-resumen">Resumen del video 5 que presenta casos de estudio y ejemplos.</p>
-                    <a href="link_video5.html" class="video-link">Ver Video</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h2>Visualizar Adeudos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Categoría</th>
+                <th>Monto</th>
+                <th>Estado</th>
+                <th>Descripción</th>
+                <th>Fecha de Vencimiento</th>
+                <th>Editar</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+           
+            </tr>
+            <tr>
+                <td>Otro</td>
+                <td>$200</td>
+                <td>Atrasada</td>
+                <td>Pago de servicios públicos</td>
+                <td>2023-01-10</td>
+                <td>
+                    <button class="editar-btn">
+                        <img src="iconos/editar.png" alt="Editar">
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </main>
-   
-</div>
+    </div>
 
-   
+    <script>
+        function filtrar() {
+            // Lógica para filtrar los resultados según el estado y la categoría seleccionados
+        }
+
+        function editar(id) {
+            // Lógica para editar el adeudo correspondiente
+        }
+    </script>
+
 </body>
 </html>

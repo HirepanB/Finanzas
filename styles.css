@@ -213,22 +213,6 @@ nav ul li a:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: #00509e; /* Azul fuerte */
-    color: white;
-}
 
 .button-container {
     display: flex;
@@ -655,4 +639,69 @@ nav ul li:hover .submenu {
 
 .articulo-link:hover {
     background-color: #3e8e41;
+}
+
+/* Editar*/
+
+.sidebar h3 {
+    color: #00509e; /* Azul fuerte */
+}
+
+/* Estilos para el formulario de filtros */
+#filtros {
+    padding: 20px;
+    background-color: #ffffff; /* Fondo blanco para el formulario */
+    border: 2px solid #00509e; /* Borde azul */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el botón de aplicar filtros */
+#filtros button[type="submit"] {
+    background-color: #00509e; /* Azul fuerte */
+    color: #ffffff; /* Blanco */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Estilos para la tabla de gastos */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #00509e; /* Azul fuerte */
+    color: #ffffff; /* Blanco */
+}
+
+/* Estilos para el botón de editar */
+.editar-btn {
+    background-color: #ffffff; /* Fondo blanco para el botón */
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.editar-btn img {
+    width: 20px; /* Ajusta el tamaño de la imagen */
+    height: 20px; /* Ajusta el tamaño de la imagen */
+}
+
+
+.sidebar h3 {
+    font-size: 16px;
+}
+
+.main-content h2 {
+    font-size: 24px;
 }

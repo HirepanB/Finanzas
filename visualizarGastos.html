@@ -22,50 +22,50 @@
                 <a href="#"><img src="iconos/icono_educacion.png" alt="Educación" class="menu-icon">Educación</a>
                 <ul class="submenu">
                     <li><a href="educacion.html">Artículos financieros</a></li>
-                    <li><a href="#">Videos financieros</a></li>
-                    <li><a href="#">Glosario financiero</a></li>
+                    <li><a href="videosedu.html">Videos financieros</a></li>
+                    <li><a href="glosarioedu.html">Glosario financiero</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><img src="iconos/icono_presupuesto.png" alt="Presupuesto" class="menu-icon">Presupuesto</a>
                 <ul class="submenu">
                     <li><a href="presupuesto.html">Crear presupuesto</a></li>
-                    <li><a href="#">Visualizar presupuesto</a></li>
+                    <li><a href="visualizarPresupuesto.html">Visualizar presupuesto</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><img src="iconos/icono_inversiones.png" alt="Inversiones" class="menu-icon">Inversiones</a>
                 <ul class="submenu">
                     <li><a href="inversiones.html">Registro de inversiones</a></li>
-                    <li><a href="#">Visualizar inversiones</a></li>
+                    <li><a href="visualizarInversiones.html">Visualizar inversiones</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><img src="iconos/icono_deudas.png" alt="Deudas" class="menu-icon">Deudas</a>
                 <ul class="submenu">
                     <li><a href="deudas.html">Registrar deuda</a></li>
-                    <li><a href="#">Visualizar deudas</a></li>
+                    <li><a href="visualizarDeudas.html">Visualizar deudas</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><img src="iconos/icono_adeudos.png" alt="Adeudos" class="menu-icon">Adeudos</a>
                 <ul class="submenu">
                     <li><a href="adeudos.html">Registrar adeudo</a></li>
-                    <li><a href="#">Visualizar adeudos</a></li>
+                    <li><a href="visualizarAdeudos.html">Visualizar adeudos</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><img src="iconos/icono_ingresos.png" alt="Ingresos" class="menu-icon">Ingresos</a>
                 <ul class="submenu">
                     <li><a href="ingresos.html">Registrar ingreso</a></li>
-                    <li><a href="#">Visualizar ingresos</a></li>
+                    <li><a href="visualizarIngresos.html">Visualizar ingresos</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#"><img src="iconos/icono_tarjetas.png" alt="Tarjetas" class="menu-icon">Tarjetas</a>
                 <ul class="submenu">
                     <li><a href="tarjetas.html">Registrar tarjeta</a></li>
-                    <li><a href="#">Visualizar tarjetas</a></li>
+                    <li><a href="visualizarTarjetas.html">Visualizar tarjetas</a></li>
                 </ul>
             </li>
             <li><a href="perfil.html"><img src="iconos/icono_perfil.png" alt="Perfil" class="menu-icon">Perfil</a></li>
@@ -74,33 +74,34 @@
 
     <div class="container">
         <!-- Columna izquierda: Filtros -->
-        <aside class="sidebar">
-            <h3>Filtros</h3>
-            <form id="filtros-form">
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" name="fecha">
-                
-                <label for="categoria">Categoría:</label>
-                <select id="categoria" name="categoria">
-                    <option value="">Todas</option>
-                    <option value="entretenimiento">Entretenimiento</option>
-                    <option value="salud">Salud</option>
-                    <option value="otro">Otros</option>
-                </select>
-                
-                <label for="monto">Monto:</label>
-                <input type="number" id="monto" name="monto" step="0.01" placeholder="Monto máximo">
-                
-                <button type="submit">Aplicar Filtros</button>
-            </form>
-        </aside>
+<!-- Columna izquierda: Filtros -->
+<aside class="sidebar">
+    <h3 style="color: #00509e;">Filtros</h3>
+    <form id="filtros ">
+        <label for="categoria">Categoría:</label>
+        <select id="categoria" name="categoria">
+            <option value="todos">Todos</option>
+            <option value="entretenimiento">Entretenimiento</option>
+            <option value="salud">Salud</option>
+        </select>
 
-        <!-- Columna derecha: Tabla de gastos -->
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha">
+
+        <label for="monto">Monto:</label>
+        <input type="number" id="monto" name="monto" step="0.01" placeholder="Ingrese un monto mínimo">
+
+        <button type="submit">Aplicar Filtros</button>
+    </form>
+</aside>
+
+        <!-- Columna derecha: Visualización de gastos -->
         <main class="main-content">
             <h2>Visualizar Gastos</h2>
             <table>
                 <thead>
                     <tr>
+                        
                         <th>Categoría</th>
                         <th>Monto</th>
                         <th>Fecha</th>
@@ -109,22 +110,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Aquí puedes agregar filas dinámicamente con JavaScript o PHP -->
-                    <tr>
-                        <td>Entretenimiento</td>
-                        <td>$50.00</td>
-                        <td>2023-10-01</td>
-                        <td>Cine</td>
-                        <td><button onclick="alert('Editando...');">Editar</button></td>
+                    <tr>    
+                        <td>Salud</td> 
+                        <td>$50</td>
+                        <td>2023-03-01</td>
+                        <td>Compra de supermercado</td>
+
+                        <td>
+                            <button class="editar-btn">
+                                <img src="iconos/editar.png" alt="Editar">
+                            </button>
+                        </td>
                     </tr>
-                    <tr>
-                        <td>Salud</td>
-                        <td>$30.00</td>
-                        <td>2023-10-02</td>
-                        <td>Consulta médica</td>
-                        <td><button onclick="alert('Editando...');">Editar</button></td>
-                    </tr>
-                    <!-- Agrega más filas según sea necesario -->
+                    <!-- Más filas de gastos -->
                 </tbody>
             </table>
         </main>
