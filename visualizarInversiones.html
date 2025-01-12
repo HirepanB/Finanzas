@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Inversiones</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html"><img src="iconos/icono_inicio.png" alt="Inicio" class="menu-icon">Inicio</a></li>
+            <li>
+                <a href="#"><img src="iconos/icono_gastos.png" alt="Gastos" class="menu-icon">Gastos</a>
+                <ul class="submenu">
+                    <li><a href="gastos.html">Registrar gastos</a></li>
+                    <li><a href="visualizarGastos.html">Visualizar gastos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_educacion.png" alt="Educación" class="menu-icon">Educación</a>
+                <ul class="submenu">
+                    <li><a href="educacion.html">Artículos financieros</a></li>
+                    <li><a href="videosedu.html">Videos financieros</a></li>
+                    <li><a href="glosarioedu.html">Glosario financiero</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_presupuesto.png" alt="Presupuesto" class="menu-icon">Presupuesto</a>
+                <ul class="submenu">
+                    <li><a href="presupuesto.html">Crear presupuesto</a></li>
+                    <li><a href="visualizarPresupuesto.html">Visualizar presupuesto</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_inversiones.png" alt="Inversiones" class="menu-icon">Inversiones</a>
+                <ul class="submenu">
+                    <li><a href="inversiones.html">Registro de inversiones</a></li>
+                    <li><a href="visualizarInversiones.html">Visualizar inversiones</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_deudas.png" alt="Deudas" class="menu-icon">Deudas</a>
+                <ul class="submenu">
+                    <li><a href="deudas.html">Registrar deuda</a></li>
+                    <li><a href="visualizarDeudas.html">Visualizar deudas</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_adeudos.png" alt="Adeudos" class="menu-icon">Adeudos</a>
+                <ul class="submenu">
+                    <li><a href="adeudos.html">Registrar adeudo</a></li>
+                    <li><a href="visualizarAdeudos.html">Visualizar adeudos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_ingresos.png" alt="Ingresos" class="menu-icon">Ingresos</a>
+                <ul class="submenu">
+                    <li><a href="ingresos.html">Registrar ingreso</a></li>
+                    <li><a href="visualizarIngresos.html">Visualizar ingresos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_tarjetas.png" alt="Tarjetas" class="menu-icon">Tarjetas</a>
+                <ul class="submenu">
+                    <li><a href="tarjetas.html">Registrar tarjeta</a></li>
+                    <li><a href="visualizarTarjetas.html">Visualizar tarjetas</a></li>
+                </ul>
+            </li>
+            <li><a href="perfil.html"><img src="iconos/icono_perfil.png" alt="Perfil" class="menu-icon">Perfil</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Columna izquierda: Filtros -->
+        <aside class="sidebar">
+            <h3 style="color: #00509e;">Filtros</h3>
+            <form id="filtros ">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha">
+
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria">
+                    <option value="empresarial">Empresarial</option>
+                    <option value="financiera">Financiera</option>
+                    <option value="participativa">Participativa</option>
+                </select>
+
+                <button type="submit">Aplicar Filtros</button>
+            </form>
+        </aside>
+
+        <!-- Columna derecha: Tabla de inversiones -->
+        <main class="main-content">
+            <h2>Visualizar Inversiones</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Duración</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Empresarial</td>
+                        <td>$1000</td>
+                        <td>2025-01-12</td>
+                        <td>12 meses</td>
+                        <td>
+                            <button class="editar-btn">
+                                <img src="iconos/editar.png" alt="Editar">
+                            </button>
+                        </td>
+                    
+                    </tr>
+                    <!-- Más filas de ejemplo pueden ser añadidas aquí -->
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+
+</body>
+</html>
