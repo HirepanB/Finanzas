@@ -385,3 +385,44 @@ nav ul li:hover .submenu {
     border-radius: 5px;
     z-index: 1000; /* Asegura que esté por encima de otros elementos */
 }
+/*ARTICULOS*/
+.articulos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.articulo {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    width: 500px; /* Aumentar el ancho de los rectángulos */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.articulo-titulo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.articulo-resumen {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.articulo-link {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.articulo-link:hover {
+    background-color: #3e8e41;
+}
