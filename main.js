@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,registerIngreso,registerTarjeta,registerPago,getTarjetas,registerDeuda,getDeudas,registerPresupuesto} = require('./database'); // Importar todas las funciones necesarias
+const { registerUser, loginUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,getAdeudos,registerIngreso,registerTarjeta,registerPago,getTarjetas,registerDeuda,getDeudas,registerPresupuesto} = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -111,6 +111,18 @@ ipcMain.on('register-adeudo', (event, adeudoData) => {
     });
 });
 
+ipcMain.on('get-adeudos', (event, filtros) => {
+    console.log('Filtros recibidos para obtener deuda:', filtros);
+    getAdeudos(filtros, (success, data, message) => {
+        if (success) {
+            console.log('Datos de adeudos obtenidas:', data);
+            event.reply('get-adeudos-response', { success, data });
+        } else {
+            console.error('Error al obtener las adeudos:', message);
+            event.reply('get-adeudos-response', { success: false, message });
+        }
+    });
+});
 
 // Evento IPC para registrar un ingreso
 ipcMain.on('register-ingreso', (event, ingresoData) => {

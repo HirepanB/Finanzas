@@ -206,6 +206,29 @@ function registerAdeudo(data, callback) {
     });
 }
 
+function getAdeudos(filtros, callback) {
+    let sql = `
+        SELECT Adeudos.*, Categorias.nombreCategoria as categoria
+        FROM Adeudos
+        JOIN Categorias ON Adeudos.id_categoria = Categorias.id_categoria
+        WHERE Adeudos.id_usuario = ?
+    `;
+    const params = [filtros.id_usuario];
+
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los Adeudos:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'Adeudos obtenidos con éxito');
+        }
+    });
+}
+
 function registerIngreso(data, callback) {
     const sql = `
         INSERT INTO Ingresos (id_usuario, monto, descripcion, fechaIngreso, fuente, id_categoria)
@@ -447,6 +470,7 @@ module.exports = {
     registerInversion,
     getInversiones,
     registerAdeudo, 
+    getAdeudos,
     registerIngreso, 
     registerTarjeta,
     getTarjetas,
