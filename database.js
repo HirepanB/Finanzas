@@ -157,5 +157,32 @@ function registerInversion(data, callback) {
     });
 }
 
+function registerAdeudo(data, callback) {
+    const sql = `
+        INSERT INTO Adeudos (id_usuario, fechaRegistro, descripcion, monto, vencimiento, estado, id_categoria)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const fechaActual = new Date().toISOString().split('T')[0]; // Fecha actual (YYYY-MM-DD)
+
+    db.run(sql, [
+        data.id_usuario,      // ID del usuario autenticado
+        fechaActual,          // Fecha de registro (actual)
+        data.descripcion,     // Descripción del adeudo
+        data.monto,           // Monto del adeudo
+        data.fecha,           // Fecha de vencimiento
+        data.estado,          // Estado del adeudo
+        data.id_categoria     // ID de la categoría
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar el adeudo:', err.message);
+            callback(false, err.message);
+        } else {
+            console.log('Adeudo registrado con éxito, ID:', this.lastID);
+            callback(true, 'Adeudo registrado con éxito');
+        }
+    });
+}
+
 // Exportar la función
-module.exports = { db, registerUser, loginUser, registerGasto, getGastos, registerInversion };
+module.exports = { db, registerUser, loginUser, registerGasto, getGastos, registerInversion, registerAdeudo };

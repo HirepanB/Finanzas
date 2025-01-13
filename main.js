@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos, registerInversion } = require('./database'); // Importar todas las funciones necesarias
+const { registerUser, loginUser, registerGasto, getGastos, registerInversion,registerAdeudo} = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -79,6 +79,20 @@ ipcMain.on('register-inversion', (event, inversionData) => {
         } else {
             console.error('Error al registrar la inversión:', message);
             event.reply('register-inversion-response', { success: false, message });
+        }
+    });
+});
+// Evento IPC para registrar un adeudo
+ipcMain.on('register-adeudo', (event, adeudoData) => {
+    console.log('Datos del adeudo recibidos:', adeudoData);
+
+    registerAdeudo(adeudoData, (success, message) => {
+        if (success) {
+            console.log('Adeudo registrado con éxito.');
+            event.reply('register-adeudo-response', { success, message });
+        } else {
+            console.error('Error al registrar el adeudo:', message);
+            event.reply('register-adeudo-response', { success: false, message });
         }
     });
 });
