@@ -129,6 +129,33 @@ function getGastos(filtros, callback) {
         }
     });
 }
+function registerInversion(data, callback) {
+    const sql = `
+        INSERT INTO Inversiones (id_usuario, montoInvertido, tipoInversion, fechaInicio, estado, descripcion, rendimiento)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 
-// Exportar las funciones y la base de datos
-module.exports = { db, registerUser, loginUser, registerGasto, getGastos };
+    // Estado inicial de la inversión: "Activa"
+    const estadoInicial = "Activa";
+
+    db.run(sql, [
+        data.id_usuario,           // Usuario asociado
+        data.monto,                // Monto invertido
+        data.categoria,            // Tipo de inversión (categoría)
+        data.fecha,                // Fecha de inicio
+        estadoInicial,             // Estado inicial de la inversión
+        data.descripcion || '',    // Descripción (opcional)
+        data.rendimiento           // Rendimiento esperado
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar la inversión:', err.message);
+            callback(false, err.message);
+        } else {
+            console.log('Inversión registrada con éxito, ID:', this.lastID);
+            callback(true, 'Inversión registrada con éxito');
+        }
+    });
+}
+
+// Exportar la función
+module.exports = { db, registerUser, loginUser, registerGasto, getGastos, registerInversion };

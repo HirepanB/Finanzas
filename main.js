@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos } = require('./database'); // Importar funciones de la base de datos
+const { registerUser, loginUser, registerGasto, getGastos, registerInversion } = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -64,6 +64,21 @@ ipcMain.on('get-gastos', (event, filtros) => {
         } else {
             console.error('Error al obtener los gastos:', message);
             event.reply('get-gastos-response', { success: false, message });
+        }
+    });
+});
+
+// Evento IPC para registrar una inversión
+ipcMain.on('register-inversion', (event, inversionData) => {
+    console.log('Datos de la inversión recibidos:', inversionData);
+
+    registerInversion(inversionData, (success, message) => {
+        if (success) {
+            console.log('Inversión registrada con éxito.');
+            event.reply('register-inversion-response', { success, message });
+        } else {
+            console.error('Error al registrar la inversión:', message);
+            event.reply('register-inversion-response', { success: false, message });
         }
     });
 });
