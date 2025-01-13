@@ -5,6 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizar Adeudos</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Cargar los gastos del usuario al cargar la página
+        window.onload = () => {
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para visualizar tus deudas.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            cargarDeudas(user.id_usuario);
+
+        };
+
+        // Función para cargar los gastos desde el backend
+        function cargarDeudas(id_usuario, filtros = {}) {
+            filtros.id_usuario = id_usuario; // Asegurar que el filtro incluye el usuario autenticado
+            console.log('Cargando deudas con filtros:', filtros); // Depuración
+
+            ipcRenderer.send('get-deudas', filtros);
+
+            ipcRenderer.once('get-deudas-response', (event, response) => {
+                console.log('Respuesta del backend:', response); // Depuración
+                if (response.success) {
+                    mostrarDeudas(response.data);
+                } else {
+                    alert(`Error: ${response.message}`);
+                }
+            });
+        }
+
+        // Función para mostrar los gastos en la tabla
+        function mostrarDeudas(deudas) {
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = ''; // Limpiar la tabla
+
+            if (deudas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No se encontraron gastos.</td></tr>`;
+                return;
+            }
+
+            deudas.forEach(deuda => {
+                const row = `
+                    <tr>
+                        <td>${deuda.categoria}</td>
+                        <td>$${deuda.monto.toFixed(2)}</td>
+                        <td>${deuda.estado}</td>
+                        <td>${deuda.descripcion}</td>
+                        <td>${deuda.fechaVencimiento}</td>
+                        <td>${deuda.acreedor}</td>
+                        <td>
+                            <button class="editar-btn" onclick="editarGasto(${deuda.id_deuda})">
+                                <img src="iconos/editar.png" alt="Editar">
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Función para editar un gasto (pendiente de implementar)
+        function editarDeuda(id_deuda) {
+            alert(`Editar gasto con ID: ${id_deuda}`);
+            // Aquí puedes redirigir a una página de edición o abrir un modal
+        }
+    </script>
 </head>
 <body>
     <nav>
@@ -110,6 +179,7 @@
                 <th>Estado</th>
                 <th>Descripción</th>
                 <th>Fecha de Vencimiento</th>
+                <th>Acreedor</th>
                 <th>Editar</th>
             </tr>
         </thead>

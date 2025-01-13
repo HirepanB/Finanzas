@@ -6,6 +6,8 @@
     <title>Registro de Deudas</title>
     <link rel="stylesheet" href="styles.css">
     <script>
+        const { ipcRenderer } = require('electron');
+
         function validarMonto(input) {
             const montoValue = parseFloat(input.value);
             if (montoValue <= 0) {
@@ -15,19 +17,52 @@
             }
         }
 
-        function mostrarMensajeExitoso(event) {
-            event.preventDefault(); // Evita que el formulario se envíe realmente
-            const mensaje = document.getElementById('mensaje-exitoso');
-            
-            // Muestra el mensaje flotante
-            mensaje.style.display = 'block';
-            setTimeout(() => {
-                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
-            }, 3000);
+        function enviarDeuda(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
 
-            // Limpia los campos del formulario
-            document.getElementById('deudas-form').reset();
+            // Recuperar el usuario autenticado
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para registrar una deuda.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Obtener los valores del formulario
+            const deudaData = {
+                id_usuario: user.id_usuario, // Asociar el gasto al usuario autenticado
+                monto: parseFloat(document.getElementById('monto').value),
+                id_categoria: parseInt(document.getElementById('categoria').value, 10), // Convertir categoría a número
+                fecha: document.getElementById('fecha').value,
+                estado: document.getElementById('estado').value,
+                acreedor: document.getElementById('acreedor').value,
+                descripcion: document.getElementById('descripcion').value
+            };
+
+            // Escuchar la respuesta del backend
+            ipcRenderer.once('register-deuda-response', (event, response) => {
+                if (response.success) {
+                    mostrarMensajeExitoso();
+                } else {
+                    alert(`Error: ${response.message}`);
+                }
+            });
+
+            // Enviar los datos al backend
+            ipcRenderer.send('register-deuda', deudaData);
+            
         }
+
+         // Mostrar mensaje de éxito y limpiar formulario
+         function mostrarMensajeExitoso() {
+            const mensaje = document.getElementById('mensaje-exitoso');
+            mensaje.style.display = 'block'; // Mostrar el mensaje
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Ocultar el mensaje después de 3 segundos
+            }, 3000);
+            document.getElementById('gastos-form').reset(); // Limpiar el formulario
+        }
+
     </script>
 </head>
 <body>
@@ -114,15 +149,15 @@
                 ¡Deuda registrada exitosamente!
             </div>
             
-            <form id="deudas-form" onsubmit="mostrarMensajeExitoso(event);">
+            <form id="deudas-form" onsubmit="enviarDeuda(event);">
                 <label for="monto">Monto:</label>
                 <input type="number" id="monto" name="monto" step="0.01" required oninput="validarMonto(this)">
                 
                 <label for="categoria">Categoría:</label>
                 <select id="categoria" name="categoria" required>
-                    <option value="entretenimiento">Entretenimiento</option>
-                    <option value="salud">Salud</option>
-                    <option value="otro">Agregar nueva...</option>
+                    <option value="1">Entretenimiento</option>
+                    <option value="2">Salud</option>
+                    <option value="3">Agregar nueva...</option>
                 </select>
                 
                 <label for="fecha">Fecha de Vencimiento:</label>
@@ -134,6 +169,12 @@
                     <option value="por_pagar">Por Pagar</option>
                     <option value="atrasada">Atrasada</option>
                 </select>
+
+                <label for="acreedor">Acreedor:</label>
+                <input type="text" id="acreedor" name="acreedor">
+
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4"></textarea>
                 
                 <button type="submit">Registrar Deuda</button>
 

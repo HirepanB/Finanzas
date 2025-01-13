@@ -15,11 +15,11 @@ const db = new sqlite3.Database('./finanzas.db', (err) => {
 // Función para registrar un usuario
 function registerUser(data, callback) {
     const sql = `
-        INSERT INTO usuarios (nombre, apellidoPaterno, apellidoMaterno, correo, contraseña, telefono)
+        INSERT INTO usuarios (nombre, apellidoPaterno, apellidoMaterno, correo, contrasena, telefono)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    bcrypt.hash(data.contraseña, 10, (err, hash) => {
+    bcrypt.hash(data.contrasena, 10, (err, hash) => {
         if (err) {
             console.error('Error al generar el hash:', err.message);
             callback(false, 'Error interno del servidor');
@@ -45,7 +45,7 @@ function registerUser(data, callback) {
 }
 
 // Función para autenticar un usuario
-function loginUser(correo, contraseña, callback) {
+function loginUser(correo, contrasena, callback) {
     const sql = 'SELECT * FROM usuarios WHERE correo = ?';
 
     db.get(sql, [correo], (err, row) => {
@@ -53,7 +53,7 @@ function loginUser(correo, contraseña, callback) {
             console.error('Error al buscar el usuario:', err.message);
             callback(false, err.message);
         } else if (row) {
-            bcrypt.compare(contraseña, row.contraseña, (err, result) => {
+            bcrypt.compare(contrasena, row.contrasena, (err, result) => {
                 if (result) {
                     console.log('Login exitoso:', row);
                     callback(true, 'Login exitoso', JSON.stringify(row));
@@ -275,6 +275,67 @@ function registerPago(data, callback) {
         }
     });
 }
+
+//////////////////////////////////
+// Función para obtener deudas
+
+function getDeudas(filtros, callback) {
+    let sql = `
+        SELECT Deudas.*, Categorias.nombreCategoria AS categoria
+        FROM Deudas
+        JOIN Categorias ON Deudas.id_categoria = Categorias.id_categoria
+        WHERE Deudas.id_usuario = ?
+    `;
+    const params = [filtros.id_usuario];
+
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los Deudas:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'Deudas obtenidos con éxito');
+        }
+    });
+}
+
+// Función para registrar un gasto
+function registerDeuda(data, callback) {
+    const sql = `
+        INSERT INTO Deudas (id_usuario,monto,fechaInicio,fechaVencimiento,descripcion,estado,acreedor,id_categoria)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, '0'); // Asegura que tenga 2 dígitos
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
+    const anio = hoy.getFullYear();
+    
+    const fechaInicio =  `${dia}/${mes}/${anio}`;
+
+    db.run(sql, [
+        data.id_usuario,
+        data.monto,
+        fechaInicio,
+        data.fecha,
+        data.descripcion,
+        data.estado,
+        data.acreedor,
+        data.id_categoria
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar la deuda:', err.message);
+            callback(false, err.message);
+        } else {
+            console.log('Deuda registrada con éxito, ID:', this.lastID);
+            callback(true, 'Deuda registrada con éxito');
+        }
+    });
+}
+
 // Exportar la función
 module.exports = { 
     db, 
@@ -287,5 +348,7 @@ module.exports = {
     registerIngreso, 
     registerTarjeta,
     getTarjetas,
-    registerPago
+    registerPago,
+    getDeudas,
+    registerDeuda
 };
