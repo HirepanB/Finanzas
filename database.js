@@ -157,6 +157,28 @@ function registerInversion(data, callback) {
     });
 }
 
+function getInversiones(filtros, callback) {
+    let sql = `
+        SELECT *
+        FROM Inversiones
+        WHERE id_usuario = ?
+    `;
+    const params = [filtros.id_usuario];
+
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los Deudas:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'Deudas obtenidos con éxito');
+        }
+    });
+}
+
 function registerAdeudo(data, callback) {
     const sql = `
         INSERT INTO Adeudos (id_usuario, fechaRegistro, descripcion, monto, vencimiento, estado, id_categoria)
@@ -422,7 +444,8 @@ module.exports = {
     loginUser, 
     registerGasto, 
     getGastos, 
-    registerInversion, 
+    registerInversion,
+    getInversiones,
     registerAdeudo, 
     registerIngreso, 
     registerTarjeta,
