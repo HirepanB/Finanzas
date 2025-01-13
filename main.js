@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos, registerInversion,registerAdeudo,registerIngreso,registerTarjeta} = require('./database'); // Importar todas las funciones necesarias
+const { registerUser, loginUser, registerGasto, getGastos, registerInversion,registerAdeudo,registerIngreso,registerTarjeta,registerPago,getTarjetas} = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -116,5 +116,19 @@ ipcMain.on('register-ingreso', (event, ingresoData) => {
 ipcMain.on('register-tarjeta', (event, tarjetaData) => {
     registerTarjeta(tarjetaData, (success, message) => {
         event.reply('register-tarjeta-response', { success, message });
+    });
+});
+
+// Obtener tarjetas del usuario
+ipcMain.on('get-tarjetas', (event, { id_usuario }) => {
+    getTarjetas(id_usuario, (success, data, message) => {
+        event.reply('get-tarjetas-response', { success, data, message });
+    });
+});
+
+// Registrar un pago
+ipcMain.on('register-pago', (event, pagoData) => {
+    registerPago(pagoData, (success, message) => {
+        event.reply('register-pago-response', { success, message });
     });
 });

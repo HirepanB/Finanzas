@@ -237,6 +237,44 @@ function registerTarjeta(data, callback) {
         }
     });
 }
+// Obtener tarjetas del usuario
+function getTarjetas(id_usuario, callback) {
+    const sql = `
+        SELECT id_tarjeta, numeroTarjeta, banco
+        FROM Tarjetas
+        WHERE id_usuario = ?
+    `;
+    db.all(sql, [id_usuario], (err, rows) => {
+        if (err) {
+            console.error('Error al obtener tarjetas:', err.message);
+            callback(false, null, err.message);
+        } else {
+            callback(true, rows, 'Tarjetas obtenidas con éxito');
+        }
+    });
+}
+
+// Registrar un pago
+function registerPago(data, callback) {
+    const sql = `
+        INSERT INTO PagosTarjeta (id_tarjeta, monto, acreedor, plazoPago, descripcion)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    db.run(sql, [
+        data.id_tarjeta,
+        data.monto,
+        data.acreedor,
+        data.plazoPago,
+        data.descripcion || ''
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar el pago:', err.message);
+            callback(false, err.message);
+        } else {
+            callback(true, 'Pago registrado con éxito');
+        }
+    });
+}
 // Exportar la función
 module.exports = { 
     db, 
@@ -247,5 +285,7 @@ module.exports = {
     registerInversion, 
     registerAdeudo, 
     registerIngreso, 
-    registerTarjeta
+    registerTarjeta,
+    getTarjetas,
+    registerPago
 };

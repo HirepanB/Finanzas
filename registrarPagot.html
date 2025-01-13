@@ -6,18 +6,72 @@
     <title>Registro de Tarjetas</title>
     <link rel="stylesheet" href="styles.css">
     <script>
-        function mostrarMensajeExitoso(event) {
-            event.preventDefault(); // Evita que el formulario se envíe realmente
+        const { ipcRenderer } = require('electron');
+
+        // Cargar tarjetas dinámicamente al cargar la página
+        window.onload = () => {
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para registrar un pago.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            ipcRenderer.send('get-tarjetas', { id_usuario: user.id_usuario });
+
+            ipcRenderer.once('get-tarjetas-response', (event, response) => {
+                if (response.success) {
+                    const select = document.getElementById('numeroTarjeta');
+                    response.data.forEach(tarjeta => {
+                        const option = document.createElement('option');
+                        option.value = tarjeta.id_tarjeta;
+                        option.textContent = `${tarjeta.numeroTarjeta} - ${tarjeta.banco}`;
+                        select.appendChild(option);
+                    });
+                } else {
+                    alert(`Error al cargar tarjetas: ${response.message}`);
+                }
+            });
+        };
+
+        // Manejar el envío del formulario
+        function registrarPago(event) {
+            event.preventDefault();
+
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para registrar un pago.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const pagoData = {
+                id_tarjeta: document.getElementById('numeroTarjeta').value,
+                monto: parseFloat(document.getElementById('monto').value),
+                acreedor: document.getElementById('acreedor').value,
+                plazoPago: document.getElementById('plazoPago').value,
+                descripcion: document.getElementById('descripcion').value || ''
+            };
+
+            ipcRenderer.send('register-pago', pagoData);
+
+            ipcRenderer.once('register-pago-response', (event, response) => {
+                if (response.success) {
+                    mostrarMensajeExitoso();
+                } else {
+                    alert(`Error al registrar el pago: ${response.message}`);
+                }
+            });
+        }
+
+        // Mostrar mensaje de éxito
+        function mostrarMensajeExitoso() {
             const mensaje = document.getElementById('mensaje-exitoso');
-            
-            // Muestra el mensaje flotante
             mensaje.style.display = 'block';
             setTimeout(() => {
-                mensaje.style.display = 'none'; // Oculta el mensaje después de 3 segundos
+                mensaje.style.display = 'none';
             }, 3000);
-
-            // Limpia los campos del formulario
-            document.getElementById('tarjetas-form').reset();
+            document.getElementById('pagos-form').reset();
         }
     </script>
 </head>
@@ -97,33 +151,32 @@
             <img src="imagenes/ptarjetasGatito.png" alt="Gatito Tarjeta" class="sidebar-image">
         </aside>
 
-        <!-- Sección principal -->
-        <main class="main-content">
-            <h2>Registro de Pago con Tarjeta</h2>
-            <!-- Mensaje de confirmación -->
-            <div id="mensaje-exitoso" style="display: none;">
-                ¡Pago con tarjeta registrado exitosamente!
-            </div>
-            
-            <form id="pagot-form" onsubmit="mostrarMensajeExitoso(event)">
-                <label for="monto">Monto:</label>
-                <input type="number" id="monto" name="monto" required>
-    
-                <label for="categoria">Categoría:</label>
-                <select id="categoria" name="categoria" required>
-                    <option value="Entretenimiento">Entretenimiento</option>
-                    <option value="Salud">Salud</option>
-                    <option value="Renta">Renta</option>
-                </select>
-    
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" name="fecha" required>
-    
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" required></textarea>
-    
-                <button type="submit">Registrar Pago</button>
-        </main>
+       <!-- Sección principal -->
+       <main class="main-content">
+        <h2>Registro de Pago con Tarjeta</h2>
+        <div id="mensaje-exitoso" style="display: none;">
+            ¡Pago con tarjeta registrado exitosamente!
+        </div>
+
+        <form id="pagos-form" onsubmit="registrarPago(event);">
+            <label for="numeroTarjeta">Número de Tarjeta:</label>
+            <select id="numeroTarjeta" name="numeroTarjeta" required></select>
+
+            <label for="monto">Monto:</label>
+            <input type="number" id="monto" name="monto" step="0.01" required>
+
+            <label for="acreedor">Acreedor:</label>
+            <input type="text" id="acreedor" name="acreedor" required>
+
+            <label for="plazoPago">Plazo de Pago:</label>
+            <input type="text" id="plazoPago" name="plazoPago" required>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <button type="submit">Registrar Pago</button>
+        </form>
+    </main>
     </div>
 </body>
 </html>
