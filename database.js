@@ -207,6 +207,36 @@ function registerIngreso(data, callback) {
         }
     });
 }
+
+// Función para registrar tarjeta
+function registerTarjeta(data, callback) {
+    const sql = `
+        INSERT INTO Tarjetas (id_usuario, numeroTarjeta, banco, saldoActual, cvv, estado, descripcion, fechaExpiracion, tipoTarjeta)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const estadoInicial = "Activa"; // Estado inicial de la tarjeta
+
+    db.run(sql, [
+        data.id_usuario,        // Usuario asociado
+        data.numeroTarjeta,     // Número de tarjeta
+        data.banco,             // Banco
+        data.saldoActual,       // Saldo actual
+        data.cvv,               // CVV
+        estadoInicial,          // Estado inicial
+        data.descripcion || '', // Descripción (opcional)
+        data.fechaExpiracion,   // Fecha de expiración
+        data.tipoTarjeta        // Tipo de tarjeta (Crédito/Débito)
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar la tarjeta:', err.message);
+            callback(false, err.message);
+        } else {
+            console.log('Tarjeta registrada con éxito, ID:', this.lastID);
+            callback(true, 'Tarjeta registrada con éxito');
+        }
+    });
+}
 // Exportar la función
 module.exports = { 
     db, 
@@ -216,5 +246,6 @@ module.exports = {
     getGastos, 
     registerInversion, 
     registerAdeudo, 
-    registerIngreso 
+    registerIngreso, 
+    registerTarjeta
 };
