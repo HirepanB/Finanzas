@@ -336,6 +336,85 @@ function registerDeuda(data, callback) {
     });
 }
 
+////////////////////////////////
+
+function getDeudas(filtros, callback) {
+    let sql = `
+        SELECT Deudas.*, Categorias.nombreCategoria AS categoria
+        FROM Deudas
+        JOIN Categorias ON Deudas.id_categoria = Categorias.id_categoria
+        WHERE Deudas.id_usuario = ?
+    `;
+    const params = [filtros.id_usuario];
+
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los Deudas:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'Deudas obtenidos con éxito');
+        }
+    });
+}
+
+// Función para registrar un gasto
+function registerPresupuesto(data, callback) {
+    const sql = `
+        INSERT INTO Presupuestos (id_usuario,montoAsignado,periodo,estado,descripcion,id_categoria)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    const estadoInicial = "Activa";
+    let presupuestoId="";
+
+    db.run(sql, [
+        data.id_usuario,
+        data.montoAsignado,
+        data.periodo,
+        estadoInicial,
+        data.descripcion,
+        data.id_categoria
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar la deuda:', err.message);
+            callback(false, err.message);
+        } else {
+            console.log('presupuesto registrada con éxito, ID:', this.lastID);
+            presupuestoId=this.lastID;
+            callback(true, 'presupuesto registrada con éxito');
+        }
+    });
+
+    const detalles=data.detalles;
+    console.log(presupuestoId);
+
+    const sqlDetalle = `
+        INSERT INTO DetallesPresupuesto (id_presupuesto,descripcion,monto)
+        VALUES (?, ?, ?)
+    `;
+
+    detalles.forEach(detalle => {
+        db.run(sqlDetalle, [
+            presupuestoId,
+            detalle.descripcion,
+            detalle.monto
+        ], function (err) {
+            if (err) {
+                console.error('Error al registrar detalle:', err.message);
+                return;
+            } else {
+                console.log('Detalle registrada con éxito, ID:', this.lastID);
+            }
+        });
+
+    });
+
+}
+
 // Exportar la función
 module.exports = { 
     db, 
@@ -350,5 +429,6 @@ module.exports = {
     getTarjetas,
     registerPago,
     getDeudas,
-    registerDeuda
+    registerDeuda,
+    registerPresupuesto
 };

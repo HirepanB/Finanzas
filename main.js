@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos, registerInversion,registerAdeudo,registerIngreso,registerTarjeta,registerPago,getTarjetas,registerDeuda,getDeudas} = require('./database'); // Importar todas las funciones necesarias
+const { registerUser, loginUser, registerGasto, getGastos, registerInversion,registerAdeudo,registerIngreso,registerTarjeta,registerPago,getTarjetas,registerDeuda,getDeudas,registerPresupuesto} = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -152,6 +152,29 @@ ipcMain.on('get-deudas', (event, filtros) => {
         } else {
             console.error('Error al obtener las deudas:', message);
             event.reply('get-deudas-response', { success: false, message });
+        }
+    });
+});
+
+// Evento IPC para registrar una deuda
+ipcMain.on('register-presupuesto', (event, data) => {
+    console.log('Datos de la presupuesto recibidos:', data);
+    registerPresupuesto(data, (success, message) => {
+        console.log(success ? 'presupuesto registrada con éxito.' : `Error al registrar presupuesto: ${message}`);
+        event.reply('register-presupuesto-response', { success, message });
+    });
+});
+
+// Evento IPC para obtener las deudas
+ipcMain.on('get-presupuestos', (event, filtros) => {
+    console.log('Filtros recibidos para obtener deuda:', filtros);
+    getPresupuestos(filtros, (success, data, message) => {
+        if (success) {
+            console.log('Datos de presupuestos obtenidas:', data);
+            event.reply('get-presupuestos-response', { success, data });
+        } else {
+            console.error('Error al obtener las presupuestos:', message);
+            event.reply('get-presupuestos-response', { success: false, message });
         }
     });
 });

@@ -112,6 +112,15 @@ function createDB(db) {
             descripcion TEXT,
             FOREIGN KEY (id_tarjeta) REFERENCES Tarjetas(id_tarjeta)
         );
+
+        CREATE TABLE IF NOT EXISTS DetallesPresupuesto (
+            id_detalle INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_presupuesto INTEGER NOT NULL,
+            descripcion TEXT,
+            monto REAL NOT NULL,
+            FOREIGN KEY (id_presupuesto) REFERENCES Tarjetas(id_presupuesto)
+        );
+
     `, (err) => {
         if (err) {
             console.error('Error al crear las tablas:', err.message);

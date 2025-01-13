@@ -6,7 +6,9 @@
     <title>Creación de Presupuesto</title>
     <link rel="stylesheet" href="styles.css">
     <script>
-        let itemCount = 2; // Contador para el número de ítem
+        const { ipcRenderer } = require('electron');
+
+        let itemCount = 1; // Contador para el número de ítem
         let totalMonto = 0; // Monto total de la tabla
         let montoAsignado = 0; // Monto asignado al presupuesto
 
@@ -14,14 +16,15 @@
             const tableBody = document.getElementById('categorias-body');
             const newRow = document.createElement('tr');
 
+            itemCount++; // Incrementar el contador después de agregar la fila
+
             newRow.innerHTML = `
                 <td>${itemCount}</td>
-                <td><input type="text" name="descripcion" required></td>
-                <td><input type="number" name="monto" step="0.01" required oninput="actualizarTotal(this)"></td>
+                <td><input type="text" id="des${itemCount}" name="descripcion" required></td>
+                <td><input type="number" id="mon${itemCount}" name="monto" step="0.01" required oninput="actualizarTotal(this)"></td>
             `;
 
             tableBody.appendChild(newRow);
-            itemCount++; // Incrementar el contador después de agregar la fila
             actualizarTotal();
         }
 
@@ -69,6 +72,51 @@
             }
 
             return true; // Si todo es válido
+        }
+
+        function enviarPresupuesto(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+
+            // Recuperar el usuario autenticado
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para registrar una deuda.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            let detalles=new Array();
+
+            for(let ii=1;ii<=itemCount;ii++){
+                detalles.push({
+                    descripcion:document.getElementById("des"+ii).value,
+                    monto:document.getElementById("mon"+ii).value
+                });
+            }
+
+            // Obtener los valores del formulario
+            const presupuestoData = {
+                id_usuario: user.id_usuario, // Asociar el gasto al usuario autenticado
+                montoAsignado: parseFloat(document.getElementById('monto-asignar').value),
+                estado: parseFloat(document.getElementById('nombre-presupuesto').value),
+                id_categoria: parseInt(document.getElementById('categoria').value, 10), // Convertir categoría a número
+                periodo: document.getElementById('periodo').value,
+                descripcion: document.getElementById('descripcion').value,
+                detalles:detalles
+            };
+
+            // Escuchar la respuesta del backend
+            ipcRenderer.once('register-presupuesto-response', (event, response) => {
+                if (response.success) {
+                    mostrarMensajeExitoso();
+                } else {
+                    alert(`Error: ${response.message}`);
+                }
+            });
+
+            // Enviar los datos al backend
+            ipcRenderer.send('register-presupuesto', presupuestoData);
+            
         }
 
         function mostrarMensajeExitoso() {
@@ -176,12 +224,29 @@
                 ¡Presupuesto creado exitosamente!
             </div>
             
-            <form id="presupuesto-form" onsubmit="if (validarFormulario()) { mostrarMensajeExitoso(); } return false;">
+            <form id="presupuesto-form" onsubmit="if (validarFormulario()) { enviarPresupuesto(event); } return false;">
                 <label for="nombre-presupuesto">Nombre del Presupuesto:</label>
                 <input type="text" id="nombre-presupuesto" name="nombre-presupuesto" required>
                 <br>
                 <label for="monto-asignar">Monto Asignado:</label>
                 <input type="number" id="monto-asignar" name="monto-asignar" step="0.01" required oninput="actualizarTotal()">
+                <br>
+
+                <label for="periodo">Peridodo(quincena):</label>
+                <input type="date" id="periodo" name="periodo" required>
+                <br>
+
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+                <br>
+
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="1">Entretenimiento</option>
+                    <option value="2">Salud</option>
+                    <option value="3">Agregar nueva...</option>
+                </select>
+
                 <br>
                 <h3>Detalles</h3>
                 <table>
@@ -195,8 +260,8 @@
                     <tbody id="categorias-body">
                         <tr>
                             <td>1</td>
-                            <td><input type="text" name="descripcion" required></td>
-                            <td><input type="number" name="monto" step="0.01" required oninput="actualizarTotal(this)"></td>
+                            <td><input type="text" id="des1" name="descripcion" required></td>
+                            <td><input type="number" id="mon1" name="monto" step="0.01" required oninput="actualizarTotal(this)"></td>
                         </tr>
                     </tbody>
                 </table>
