@@ -184,5 +184,37 @@ function registerAdeudo(data, callback) {
     });
 }
 
+function registerIngreso(data, callback) {
+    const sql = `
+        INSERT INTO Ingresos (id_usuario, monto, descripcion, fechaIngreso, fuente, id_categoria)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    db.run(sql, [
+        data.id_usuario,     // ID del usuario autenticado
+        data.monto,          // Monto del ingreso
+        data.descripcion,    // Descripción del ingreso
+        data.fecha,          // Fecha del ingreso
+        data.fuente,         // Fuente del ingreso
+        data.id_categoria    // ID de la categoría
+    ], function (err) {
+        if (err) {
+            console.error('Error al registrar el ingreso:', err.message);
+            callback(false, err.message);
+        } else {
+            console.log('Ingreso registrado con éxito, ID:', this.lastID);
+            callback(true, 'Ingreso registrado con éxito');
+        }
+    });
+}
 // Exportar la función
-module.exports = { db, registerUser, loginUser, registerGasto, getGastos, registerInversion, registerAdeudo };
+module.exports = { 
+    db, 
+    registerUser, 
+    loginUser, 
+    registerGasto, 
+    getGastos, 
+    registerInversion, 
+    registerAdeudo, 
+    registerIngreso 
+};
