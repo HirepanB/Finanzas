@@ -102,20 +102,6 @@ function getGastos(filtros, callback) {
     `;
     const params = [filtros.id_usuario];
 
-    // Aplicar filtros opcionales
-    if (filtros.categoria && filtros.categoria !== 'todos') {
-        sql += ' AND G.id_categoria = ?';
-        params.push(filtros.categoria);
-    }
-    if (filtros.fecha) {
-        sql += ' AND G.fecha = ?';
-        params.push(filtros.fecha);
-    }
-    if (filtros.monto) {
-        sql += ' AND G.monto >= ?';
-        params.push(filtros.monto);
-    }
-
     console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
     console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
 
@@ -461,49 +447,80 @@ function registerPresupuesto(data, callback) {
 
     const estadoInicial = "Activa";
     let presupuestoId="";
+    let fl=true;
 
     db.run(sql, [
         data.id_usuario,
         data.montoAsignado,
         data.periodo,
-        estadoInicial,
+        data.estado,
         data.descripcion,
         data.id_categoria
     ], function (err) {
         if (err) {
             console.error('Error al registrar la deuda:', err.message);
+            fl=false;
             callback(false, err.message);
         } else {
             console.log('presupuesto registrada con éxito, ID:', this.lastID);
             presupuestoId=this.lastID;
+            
+            const detalles=data.detalles;
+            console.log(presupuestoId);
+
+            const sqlDetalle = `
+                INSERT INTO DetallesPresupuesto (id_presupuesto,descripcion,monto)
+                VALUES (?, ?, ?)
+            `;
+
+            detalles.forEach(detalle => {
+                db.run(sqlDetalle, [
+                    presupuestoId,
+                    detalle.descripcion,
+                    detalle.monto
+                ], function (err) {
+                    if (err) {
+                        console.error('Error al registrar detalle:', err.message);
+                        return;
+                    } else {
+                        console.log('Detalle registrada con éxito, ID:', this.lastID);
+                    }
+                });
+
+            });
             callback(true, 'presupuesto registrada con éxito');
         }
     });
 
-    const detalles=data.detalles;
-    console.log(presupuestoId);
+    if(!fl)return;
 
-    const sqlDetalle = `
-        INSERT INTO DetallesPresupuesto (id_presupuesto,descripcion,monto)
-        VALUES (?, ?, ?)
+    
+
+}
+
+function getPresupuestosDetalles(filtros, callback) {
+    let sql = `
+        SELECT Presupuestos.*, DetallesPresupuesto.*, Categorias.nombreCategoria as categoria
+        FROM Presupuestos
+        JOIN Categorias ON Presupuestos.id_categoria = Categorias.id_categoria
+        JOIN DetallesPresupuesto ON Presupuestos.id_presupuestos = DetallesPresupuesto.id_presupuesto
+        WHERE Presupuestos.id_usuario = ?
+        ORDER BY Presupuestos.id_presupuestos ASC
     `;
+    const params = [filtros.id_usuario];
 
-    detalles.forEach(detalle => {
-        db.run(sqlDetalle, [
-            presupuestoId,
-            detalle.descripcion,
-            detalle.monto
-        ], function (err) {
-            if (err) {
-                console.error('Error al registrar detalle:', err.message);
-                return;
-            } else {
-                console.log('Detalle registrada con éxito, ID:', this.lastID);
-            }
-        });
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
 
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los presupuestos:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'presupuestos obtenidos con éxito');
+        }
     });
-
 }
 
 // Exportar la función
@@ -525,5 +542,6 @@ module.exports = {
     getPagos,
     getDeudas,
     registerDeuda,
-    registerPresupuesto
+    registerPresupuesto,
+    getPresupuestosDetalles
 };

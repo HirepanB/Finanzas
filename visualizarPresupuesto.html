@@ -5,7 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizar Presupuesto</title>
     <link rel="stylesheet" href="styles.css">
-    
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Cargar los gastos del usuario al cargar la página
+        window.onload = () => {
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para visualizar tus deudas.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            cargarPresupuestosDetalles(user.id_usuario);
+
+        };
+
+        // Función para cargar los gastos desde el backend
+        function cargarPresupuestosDetalles(id_usuario, filtros = {}) {
+            filtros.id_usuario = id_usuario; // Asegurar que el filtro incluye el usuario autenticado
+            console.log('Cargando presupuestos con filtros:', filtros); // Depuración
+
+            
+            ipcRenderer.once('get-presupuestos-response', (event, response) => {
+                console.log('Respuesta del backend:', response); // Depuración
+                if (response.success) {
+                    let pres=[];
+                    let ind=-1,act={};
+                    response.data.forEach(row => {
+                        if(row.id_presupuestos!=ind){
+                            if(ind!=-1){
+                                pres.push({...act});
+                                act={};
+                            }
+                            act={
+                                id_presupuestos:row.id_presupuestos,
+                                estado:row.estado,
+                                montoAsignado:row.montoAsignado,
+                                descripcion:row.descripcion,
+                                categoria:row.categoria,
+                                detalles:[]
+                            };
+                            ind=row.id_presupuestos;
+                        }
+                        act.detalles.push({
+                            id_detalle:row.id_detalle,
+                            descripcion:row.descripcion,
+                            monto:row.monto
+                        });
+                    });
+                    if(ind!=-1){
+                        pres.push({...act});
+                        act={};
+                    }
+
+                    mostrarPresupuestosDetalles(pres);
+                } else {
+                    alert(`Error: ${response.message}`);
+                }
+            });
+
+            ipcRenderer.send('get-presupuestos', filtros);
+
+        }
+
+        // Función para mostrar los gastos en la tabla
+        function mostrarPresupuestosDetalles(presupuestos) {
+            const tbody = document.getElementById('presupuesto-list');
+            tbody.innerHTML = ''; // Limpiar la tabla
+
+            if (presupuestos.length === 0) {
+                tbody.innerHTML = `No se encontraron presupuestos.`;
+                return;
+            }
+
+
+            function generarFilas(row){
+                let i=1;
+                let s='';
+                
+                row.detalles.forEach(det=>{
+                    s+=`<tr><td>${i++}</td>
+                       <td>${det.descripcion}</td>
+                       <td>${det.monto.toFixed(2)}</td>
+                       <td><button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></td>
+                       </tr>`;
+                });
+
+                return s;
+            }
+
+            
+            presupuestos.forEach(presupuesto => {
+                const row = `
+                    <div class="presupuesto-item" id=${presupuesto.id_presupuestos}>
+                        <h3>${presupuesto.estado} <button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></h3>
+                        <p>Monto Asignado: $${presupuesto.montoAsignado} <button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Descripción</th>
+                                    <th>Monto</th>
+                                    <th>Editar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${generarFilas(presupuesto)}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Función para editar un gasto (pendiente de implementar)
+        function editarDeuda(id_deuda) {
+            alert(`Editar gasto con ID: ${id_deuda}`);
+            // Aquí puedes redirigir a una página de edición o abrir un modal
+        }
+    </script>
 </head>
 <body>
     <nav>
@@ -94,75 +214,8 @@
                     <button id="search-button">Buscar</button>
                 </div> 
                 <div class="glossary-scroll">
-                <div class="presupuesto-list">
-                    <div class="presupuesto-item">
-                        <h3>Trabajo proyecto programa <button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></h3>
-                        <p>Monto Asignado: $5000 <button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></p>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Descripción</th>
-                                    <th>Monto</th>
-                                    <th>Editar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Gastos de oficina</td>
-                                    <td>$1000</td>
-                                    <td><button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Marketing</td>
-                                    <td>$2000</td>
-                                    <td><button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Gastos de papeleria</td>
-                                    <td>$500</td>
-                                    <td><button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="presupuesto-item">
-                        <h3>Vacaciones cancun <button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></h3>
-                        <p>Monto Asignado: $15000 <button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></p>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Descripción</th>
-                                    <th>Monto</th>
-                                    <th>Editar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Gastos de viaje</td>
-                                    <td>$500</td>
-                                    <td><button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Comida</td>
-                                    <td>$1000</td>
-                                    <td><button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Comida de gato</td>
-                                    <td>$9000</td>
-                                    <td><button class="editar-btn"><img src="iconos/editar.png" alt="Editar"></button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="presupuesto-list" id="presupuesto-list">
+                    
                 </div>
                     <!-- Más presupuestos pueden ser añadidos aquí -->
                 </div>
