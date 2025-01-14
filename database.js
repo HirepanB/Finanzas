@@ -308,7 +308,7 @@ function registerTarjeta(data, callback) {
 // Obtener tarjetas del usuario
 function getTarjetas(id_usuario, callback) {
     const sql = `
-        SELECT id_tarjeta, numeroTarjeta, banco
+        SELECT *
         FROM Tarjetas
         WHERE id_usuario = ?
     `;

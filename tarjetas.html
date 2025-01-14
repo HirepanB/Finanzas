@@ -84,7 +84,7 @@
 
             <form id="tarjetas-form" onsubmit="enviarTarjeta(event);">
                 <label for="numeroTarjeta">Número de Tarjeta:</label>
-                <input type="text" id="numeroTarjeta" name="numeroTarjeta" maxlength="16" required>
+                <input type="text" id="numeroTarjeta" name="numeroTarjeta" maxlength="16" pattern="[0-9]+" required>
 
                 <label for="banco">Banco:</label>
                 <input type="text" id="banco" name="banco" required>
