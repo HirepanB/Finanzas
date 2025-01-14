@@ -344,6 +344,29 @@ function registerPago(data, callback) {
     });
 }
 
+function getPagos(filtros, callback) {
+    let sql = `
+        SELECT PagosTarjeta.*, Tarjetas.*
+        FROM PagosTarjeta
+        JOIN Tarjetas ON PagosTarjeta.id_tarjeta = Tarjetas.id_tarjeta
+        WHERE Tarjetas.id_usuario = ?
+    `;
+    const params = [filtros.id_usuario];
+
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los Pagos:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'Pagos obtenidos con éxito');
+        }
+    });
+}
+
 //////////////////////////////////
 // Función para obtener deudas
 
@@ -499,6 +522,7 @@ module.exports = {
     registerTarjeta,
     getTarjetas,
     registerPago,
+    getPagos,
     getDeudas,
     registerDeuda,
     registerPresupuesto

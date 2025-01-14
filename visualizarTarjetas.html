@@ -5,6 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizar pago con Tarjeta</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Cargar los gastos del usuario al cargar la página
+        window.onload = () => {
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para visualizar tus deudas.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            cargarPagos(user.id_usuario);
+
+        };
+
+        // Función para cargar los gastos desde el backend
+        function cargarPagos(id_usuario, filtros = {}) {
+            filtros.id_usuario = id_usuario; // Asegurar que el filtro incluye el usuario autenticado
+            console.log('Cargando pagos con filtros:', filtros); // Depuración
+
+            
+            ipcRenderer.once('get-pagos-response', (event, response) => {
+                console.log('Respuesta del backend:', response); // Depuración
+                if (response.success) {
+                    mostrarPagos(response.data);
+                } else {
+                    alert(`Error: ${response.message}`);
+                }
+            });
+
+            ipcRenderer.send('get-pagos', filtros);
+
+        }
+
+        // Función para mostrar los gastos en la tabla
+        function mostrarPagos(pagos) {
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = ''; // Limpiar la tabla
+
+            if (pagos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No se encontraron pagos.</td></tr>`;
+                return;
+            }
+
+            pagos.forEach(pago => {
+                const row = `
+                    <tr>
+                        <td>${pago.numeroTarjeta + " - " + pago.banco}</td>
+                        <td>$${pago.monto.toFixed(2)}</td>
+                        <td>${pago.acreedor}</td>
+                        <td>${pago.plazoPago}</td>
+                        <td>${pago.descripcion}</td>
+                        <td>
+                            <button class="editar-btn" onclick="editarGasto(${pago.id_pagoTarjeta})">
+                                <img src="iconos/editar.png" alt="Editar">
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Función para editar un gasto (pendiente de implementar)
+        function editarDeuda(id_deuda) {
+            alert(`Editar gasto con ID: ${id_deuda}`);
+            // Aquí puedes redirigir a una página de edición o abrir un modal
+        }
+    </script>
 </head>
 <body>
     <nav>
@@ -102,9 +172,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Categoría</th>
+                        <th>Tarjeta</th>
                         <th>Monto</th>
-                        <th>Fecha</th>
+                        <th>Acreedor</th>
+                        <th>Plazo de pago</th>
                         <th>Descripcion</th>
                         <th>Editar</th>
                     </tr>

@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,getAdeudos,registerIngreso,getIngresos,registerTarjeta,registerPago,getTarjetas,registerDeuda,getDeudas,registerPresupuesto} = require('./database'); // Importar todas las funciones necesarias
+const { registerUser, loginUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,getAdeudos,registerIngreso,getIngresos,registerTarjeta,registerPago,getPagos,getTarjetas,registerDeuda,getDeudas,registerPresupuesto} = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -169,6 +169,19 @@ ipcMain.on('get-tarjetas', (event, { id_usuario }) => {
 ipcMain.on('register-pago', (event, pagoData) => {
     registerPago(pagoData, (success, message) => {
         event.reply('register-pago-response', { success, message });
+    });
+});
+
+ipcMain.on('get-pagos', (event, filtros) => {
+    console.log('Filtros recibidos para obtener deuda:', filtros);
+    getPagos(filtros, (success, data, message) => {
+        if (success) {
+            console.log('Datos de pagos obtenidas:', data);
+            event.reply('get-pagos-response', { success, data });
+        } else {
+            console.error('Error al obtener las pagos:', message);
+            event.reply('get-pagos-response', { success: false, message });
+        }
     });
 });
 
