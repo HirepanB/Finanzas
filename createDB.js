@@ -118,7 +118,7 @@ function createDB(db) {
             id_presupuesto INTEGER NOT NULL,
             descripcion TEXT,
             monto REAL NOT NULL,
-            FOREIGN KEY (id_presupuesto) REFERENCES Tarjetas(id_presupuesto)
+            FOREIGN KEY (id_presupuesto) REFERENCES Presupuestos(id_presupuestos)
         );
 
     `, (err) => {

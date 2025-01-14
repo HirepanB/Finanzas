@@ -98,7 +98,7 @@
             const presupuestoData = {
                 id_usuario: user.id_usuario, // Asociar el gasto al usuario autenticado
                 montoAsignado: parseFloat(document.getElementById('monto-asignar').value),
-                estado: parseFloat(document.getElementById('nombre-presupuesto').value),
+                estado: document.getElementById('nombre-presupuesto').value,
                 id_categoria: parseInt(document.getElementById('categoria').value, 10), // Convertir categoría a número
                 periodo: document.getElementById('periodo').value,
                 descripcion: document.getElementById('descripcion').value,
