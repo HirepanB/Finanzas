@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,getAdeudos,registerIngreso,registerTarjeta,registerPago,getTarjetas,registerDeuda,getDeudas,registerPresupuesto} = require('./database'); // Importar todas las funciones necesarias
+const { registerUser, loginUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,getAdeudos,registerIngreso,getIngresos,registerTarjeta,registerPago,getTarjetas,registerDeuda,getDeudas,registerPresupuesto} = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -138,6 +138,19 @@ ipcMain.on('register-ingreso', (event, ingresoData) => {
     });
 });
 
+ipcMain.on('get-ingresos', (event, filtros) => {
+    console.log('Filtros recibidos para obtener ingresos:', filtros);
+    getIngresos(filtros, (success, data, message) => {
+        if (success) {
+            console.log('Datos de Ingresos obtenidas:', data);
+            event.reply('get-ingresos-response', { success, data });
+        } else {
+            console.error('Error al obtener las Ingresos:', message);
+            event.reply('get-ingresos-response', { success: false, message });
+        }
+    });
+});
+
 // Evento para registrar tarjeta
 ipcMain.on('register-tarjeta', (event, tarjetaData) => {
     registerTarjeta(tarjetaData, (success, message) => {
@@ -182,7 +195,6 @@ ipcMain.on('get-deudas', (event, filtros) => {
     });
 });
 
-// Evento IPC para registrar una deuda
 ipcMain.on('register-presupuesto', (event, data) => {
     console.log('Datos de la presupuesto recibidos:', data);
     registerPresupuesto(data, (success, message) => {
@@ -191,7 +203,6 @@ ipcMain.on('register-presupuesto', (event, data) => {
     });
 });
 
-// Evento IPC para obtener las deudas
 ipcMain.on('get-presupuestos', (event, filtros) => {
     console.log('Filtros recibidos para obtener deuda:', filtros);
     getPresupuestos(filtros, (success, data, message) => {

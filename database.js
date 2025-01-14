@@ -253,6 +253,29 @@ function registerIngreso(data, callback) {
     });
 }
 
+function getIngresos(filtros, callback) {
+    let sql = `
+        SELECT Ingresos.*, Categorias.nombreCategoria as categoria
+        FROM Ingresos
+        JOIN Categorias ON Ingresos.id_categoria = Categorias.id_categoria
+        WHERE Ingresos.id_usuario = ?
+    `;
+    const params = [filtros.id_usuario];
+
+    console.log('Consulta SQL generada:', sql); // Depuración: Verificar la consulta generada
+    console.log('Parámetros usados:', params); // Depuración: Verificar los parámetros usados
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Error al obtener los Ingresos:', err.message);
+            callback(false, null, err.message);
+        } else {
+            console.log('Resultados obtenidos:', rows); // Depuración: Verificar los resultados obtenidos
+            callback(true, rows, 'Ingresos obtenidos con éxito');
+        }
+    });
+}
+
 // Función para registrar tarjeta
 function registerTarjeta(data, callback) {
     const sql = `
@@ -471,7 +494,8 @@ module.exports = {
     getInversiones,
     registerAdeudo, 
     getAdeudos,
-    registerIngreso, 
+    registerIngreso,
+    getIngresos,
     registerTarjeta,
     getTarjetas,
     registerPago,
