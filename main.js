@@ -18,7 +18,6 @@ function createWindow() {
 
 app.whenReady().then(() => {
     createWindow();
-
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
@@ -227,4 +226,202 @@ ipcMain.on('get-presupuestos', (event, filtros) => {
             event.reply('get-presupuestos-response', { success: false, message });
         }
     });
+});
+
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
+function generarReporteQuincenal(datos, rangoFechas, filePath = './reporte-quincenal.pdf') {
+    const doc = new PDFDocument();
+
+    // Guardar el archivo
+    doc.pipe(fs.createWriteStream(filePath));
+
+    // Encabezado
+    doc.fontSize(20).text('Reporte Financiero Quincenal', { align: 'center' });
+    doc.fontSize(14).text(`Periodo: ${rangoFechas.inicio} - ${rangoFechas.fin}`, { align: 'center' });
+    doc.moveDown();
+
+    // Ingresos
+    doc.fontSize(16).text('Ingresos', { underline: true });
+    datos.ingresos.forEach((ingreso) => {
+        doc.fontSize(12).text(`- ${ingreso.descripcion}: $${ingreso.monto.toFixed(2)} (${ingreso.fechaIngreso})`);
+    });
+    const totalIngresos = datos.ingresos.reduce((sum, ingreso) => sum + ingreso.monto, 0);
+    doc.fontSize(12).text(`Total Ingresos: $${totalIngresos.toFixed(2)}`);
+    doc.moveDown();
+
+    // Gastos
+    doc.fontSize(16).text('Gastos', { underline: true });
+    datos.gastos.forEach((gasto) => {
+        doc.fontSize(12).text(`- ${gasto.descripcion}: $${gasto.monto.toFixed(2)} (${gasto.fecha})`);
+    });
+    const totalGastos = datos.gastos.reduce((sum, gasto) => sum + gasto.monto, 0);
+    doc.fontSize(12).text(`Total Gastos: $${totalGastos.toFixed(2)}`);
+    doc.moveDown();
+
+    // Adeudos
+    doc.fontSize(16).text('Adeudos', { underline: true });
+    datos.adeudos.forEach((adeudo) => {
+        doc.fontSize(12).text(`- ${adeudo.descripcion}: $${adeudo.monto.toFixed(2)} (Vence: ${adeudo.vencimiento}, Estado: ${adeudo.estado})`);
+    });
+    const totalAdeudos = datos.adeudos.reduce((sum, adeudo) => sum + adeudo.monto, 0);
+    doc.fontSize(12).text(`Total Adeudos: $${totalAdeudos.toFixed(2)}`);
+    doc.moveDown();
+
+    // Deudas
+    doc.fontSize(16).text('Deudas', { underline: true });
+    datos.deudas.forEach((deuda) => {
+        doc.fontSize(12).text(`- ${deuda.descripcion}: $${deuda.monto.toFixed(2)} (Vence: ${deuda.fechaVencimiento}, Estado: ${deuda.estado}, Acreedor: ${deuda.acreedor})`);
+    });
+    const totalDeudas = datos.deudas.reduce((sum, deuda) => sum + deuda.monto, 0);
+    doc.fontSize(12).text(`Total Deudas: $${totalDeudas.toFixed(2)}`);
+    doc.moveDown();
+
+    // Pagos con Tarjeta
+    doc.fontSize(16).text('Pagos con Tarjeta', { underline: true });
+    datos.pagosTarjeta.forEach((pago) => {
+        doc.fontSize(12).text(`- ${pago.descripcion}: $${pago.monto.toFixed(2)} (Fecha límite: ${pago.plazoPago}, Acreedor: ${pago.acreedor})`);
+    });
+    const totalPagosTarjeta = datos.pagosTarjeta.reduce((sum, pago) => sum + pago.monto, 0);
+    doc.fontSize(12).text(`Total Pagos con Tarjeta: $${totalPagosTarjeta.toFixed(2)}`);
+    doc.moveDown();
+
+    // Resumen final
+    const balance = totalIngresos - (totalGastos + totalAdeudos + totalDeudas + totalPagosTarjeta);
+    doc.fontSize(16).text('Resumen Final', { underline: true });
+    doc.fontSize(12).text(`Balance Quincenal: $${balance.toFixed(2)}`);
+    doc.moveDown();
+
+    // Finalizar y guardar
+    doc.end();
+    console.log(`Reporte generado en: ${filePath}`);
+    
+}
+
+// Datos de ejemplo
+const datosEjemplo = {
+    ingresos: [
+        { descripcion: 'Salario', monto: 15000, fechaIngreso: '2025-01-01' },
+        { descripcion: 'Venta', monto: 2000, fechaIngreso: '2025-01-10' },
+    ],
+    gastos: [
+        { descripcion: 'Renta', monto: 7000, fecha: '2025-01-05' },
+        { descripcion: 'Supermercado', monto: 2500, fecha: '2025-01-08' },
+    ],
+    adeudos: [
+        { descripcion: 'Pago servicio', monto: 1200, vencimiento: '2025-01-14', estado: 'Pendiente' },
+    ],
+    deudas: [
+        { descripcion: 'Préstamo', monto: 5000, fechaVencimiento: '2025-01-12', estado: 'Pendiente', acreedor: 'Banco XYZ' },
+    ],
+    pagosTarjeta: [
+        { descripcion: 'Pago mensualidad', monto: 3000, plazoPago: '2025-01-15', acreedor: 'Banco ABC' },
+    ],
+};
+
+
+const rangoFechas = { inicio: '2025-01-01', fin: '2025-01-15' };
+
+function openPDF(filePath){
+    let pdfWindow = new BrowserWindow({
+        icon: './build/icon.png',
+        width: 1200,
+        height: 800,
+        webPreferences: {
+            plugins: true
+        }
+    });
+
+    pdfWindow.loadURL(require('url').format({
+        pathname: filePath,
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    pdfWindow.setMenu(null);
+
+    pdfWindow.on("closed", function () {
+        pdfWindow = null
+    });
+}
+
+ipcMain.on('generar-reporte', (event, data) => {
+    console.log('Generando reporte con datos:', data);
+
+    const filtros={id_usuario: data.id_usuario};
+
+    var ingresos,gastos,adeudos,deudas,pagosTarjeta;
+
+    getIngresos(filtros, (success, data, message) => {
+        ingresos = data;
+    });
+    getGastos(filtros, (success, data, message) => {
+        gastos = data;
+    });
+    getAdeudos(filtros, (success, data, message) => {
+        adeudos = data;
+    });
+    getDeudas(filtros, (success, data, message) => {
+        deudas = data;
+    });
+    getPagos(filtros, (success, data, message) => {
+        pagosTarjeta = data;
+    });
+
+    function calcularRangoQuincena(data) {
+        const inicio = `${data.ano}-${String(data.mes).padStart(2, '0')}-${data.quincena === 1 ? '01' : '16'}`;
+        const fin =
+            data.quincena === 1
+                ? `${data.ano}-${String(data.mes).padStart(2, '0')}-15`
+                : `${data.ano}-${String(data.mes).padStart(2, '0')}-${new Date(data.ano, data.mes, 0).getDate()}`; // Último día del mes
+        return { inicio, fin };
+    }
+    
+    // Función para verificar si una fecha está dentro de un rango
+    function estaEnRango(fecha, inicio, fin) {
+        return fecha >= inicio && fecha <= fin;
+    }
+    
+    // Datos del usuario
+    const rango = calcularRangoQuincena(data);
+    
+    setTimeout(()=>{
+
+        // Filtrar los ingresos, gastos, adeudos, deudas y pagos de tarjeta
+        ingresos = ingresos.filter((ingreso) =>
+            estaEnRango(ingreso.fechaIngreso, rango.inicio, rango.fin)
+        );
+        
+        gastos = gastos.filter((gasto) =>
+            estaEnRango(gasto.fecha, rango.inicio, rango.fin)
+        );
+        
+        adeudos = adeudos.filter((adeudo) =>
+            estaEnRango(adeudo.vencimiento, rango.inicio, rango.fin)
+        );
+        
+        deudas = deudas.filter((deuda) =>
+            estaEnRango(deuda.fechaVencimiento, rango.inicio, rango.fin)
+        );
+        
+        pagosTarjeta = pagosTarjeta.filter((pago) =>
+            estaEnRango(pago.plazoPago, rango.inicio, rango.fin)
+        );
+        
+        // Salida de prueba
+        /* console.log('Ingresos Filtrados:', ingresosFiltrados);
+        console.log('Gastos Filtrados:', gastosFiltrados);
+        console.log('Adeudos Filtrados:', adeudosFiltrados);
+        console.log('Deudas Filtradas:', deudasFiltradas);
+        console.log('Pagos con Tarjeta Filtrados:', pagosTarjetaFiltrados); */
+
+        generarReporteQuincenal({
+            ingresos,gastos,adeudos,deudas,pagosTarjeta
+            },rango);
+
+        openPDF('./reporte-quincenal.pdf');
+
+    },5000);
+
 });

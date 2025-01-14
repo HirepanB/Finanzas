@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Deudas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        function enviarQuincena(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para registrar un adeudo.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const data = {
+                id_usuario: user.id_usuario, // Asociar el adeudo al usuario autenticado
+                ano: parseInt(document.getElementById('ano').value), // Convertir a número
+                mes: parseInt(document.getElementById('mes').value), // Convertir a número
+                quincena: parseInt(document.getElementById('quincena').value), // Convertir a número
+            };
+
+            ipcRenderer.send('generar-reporte', data);
+
+        }
+
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html"><img src="iconos/icono_inicio.png" alt="Inicio" class="menu-icon">Inicio</a></li>
+            <li>
+                <a href="#"><img src="iconos/icono_gastos.png" alt="Gastos" class="menu-icon">Gastos</a>
+                <ul class="submenu">
+                    <li><a href="gastos.html">Registrar gastos</a></li>
+                    <li><a href="visualizarGastos.html">Visualizar gastos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_educacion.png" alt="Educación" class="menu-icon">Educación</a>
+                <ul class="submenu">
+                    <li><a href="educacion.html">Artículos financieros</a></li>
+                    <li><a href="videosedu.html">Videos financieros</a></li>
+                    <li><a href="glosarioedu.html">Glosario financiero</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_presupuesto.png" alt="Presupuesto" class="menu-icon">Presupuesto</a>
+                <ul class="submenu">
+                    <li><a href="presupuesto.html">Crear presupuesto</a></li>
+                    <li><a href="visualizarPresupuesto.html">Visualizar presupuesto</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_inversiones.png" alt="Inversiones" class="menu-icon">Inversiones</a>
+                <ul class="submenu">
+                    <li><a href="inversiones.html">Registro de inversiones</a></li>
+                    <li><a href="visualizarInversiones.html">Visualizar inversiones</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_deudas.png" alt="Deudas" class="menu-icon">Deudas</a>
+                <ul class="submenu">
+                    <li><a href="deudas.html">Registrar deuda</a></li>
+                    <li><a href="visualizarDeudas.html">Visualizar deudas</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_adeudos.png" alt="Adeudos" class="menu-icon">Adeudos</a>
+                <ul class="submenu">
+                    <li><a href="adeudos.html">Registrar adeudo</a></li>
+                    <li><a href="visualizarAdeudos.html">Visualizar adeudos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_ingresos.png" alt="Ingresos" class="menu-icon">Ingresos</a>
+                <ul class="submenu">
+                    <li><a href="ingresos.html">Registrar ingreso</a></li>
+                    <li><a href="visualizarIngresos.html">Visualizar ingresos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><img src="iconos/icono_tarjetas.png" alt="Tarjetas" class="menu-icon">Tarjetas</a>
+                <ul class="submenu">
+                    <li><a href="tarjetas.html">Registrar tarjeta</a></li>
+                    <li><a href="registrarPagot.html">Registrar pago con tarjeta</a></li>
+                    <li><a href="visualizarTarjetas2.html">Visualizar tarjetas</a></li>
+                    <li><a href="visualizarTarjetas.html">Visualizar pago con tarjeta</a></li>
+                </ul>
+            </li>
+            <li><a href="perfil.html"><img src="iconos/icono_perfil.png" alt="Perfil" class="menu-icon">Perfil</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <!-- Sección principal -->
+        <main class="main-content">
+            <h2>Selecciona la quincena a generar el reporte</h2>
+            <!-- Mensaje de confirmación -->
+            
+            <form id="quincena-form" onsubmit="enviarQuincena(event);">
+                <label for="ano">Año:</label>
+                <input type="number" id="ano" name="ano" step="1" required maxlength="4">
+
+                <label for="mes">Mes:</label>
+                <input type="number" id="mes" name="mes" step="1" required maxlength="2" min="1" max="12">
+
+                <label for="quincena">Quincena:</label>
+                <select id="quincena" name="quincena" required>
+                    <option value="1">1</option>
+                    <option value="16">16</option>
+                </select>
+                
+                <button type="submit">Generar reporte</button>
+
+            </form>
+        </main>
+    </div>
+</body>
+</html>
