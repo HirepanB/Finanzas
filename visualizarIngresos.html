@@ -10,6 +10,45 @@
 
         // Cargar los gastos del usuario al cargar la página
         window.onload = () => {
+            const fechaFiltro = document.getElementById('fecha');
+            const categoriaFiltro = document.getElementById('categoria');
+            const montoFiltro = document.getElementById('monto');
+            const tipoFiltro = document.getElementById('tipo');
+
+            // Función para filtrar dinámicamente la tabla
+            function aplicarFiltros() {
+                const fechaSeleccionada = fechaFiltro.value;
+                const categoriaSeleccionada = categoriaFiltro.value.toLowerCase();
+                const montoSeleccionado = montoFiltro.value;
+                const tipoSeleccionado = tipoFiltro.value.toLowerCase();
+
+                // Obtener todas las filas de la tabla
+                const filas = document.querySelectorAll('table tbody tr');
+
+                // Iterar sobre cada fila y aplicar los filtros
+                filas.forEach(fila => {
+                    const categoria = fila.children[0].textContent.toLowerCase();
+                    const monto = parseFloat(fila.children[1].textContent.replace('$', ''));
+                    const fecha = fila.children[2].textContent;
+                    const tipo = fila.children[4].textContent.toLowerCase();
+
+                    // Determinar si la fila cumple con los filtros
+                    const coincideCategoria = categoriaSeleccionada === '' || categoria.includes(categoriaSeleccionada);
+                    const coincideTipo = tipoSeleccionado === '' || tipo.includes(tipoSeleccionado);
+                    const coincideFecha = !fechaSeleccionada || fecha === fechaSeleccionada;
+                    const coincideMonto = !montoSeleccionado || monto === parseFloat(montoSeleccionado);
+
+                    // Mostrar u ocultar la fila según los filtros
+                    fila.style.display = coincideCategoria && coincideTipo && coincideFecha && coincideMonto ? '' : 'none';
+                });
+            }
+
+            // Agregar eventos de cambio a los filtros para que apliquen automáticamente
+            fechaFiltro.addEventListener('change', aplicarFiltros);
+            categoriaFiltro.addEventListener('change', aplicarFiltros);
+            montoFiltro.addEventListener('input', aplicarFiltros);
+            tipoFiltro.addEventListener('change', aplicarFiltros);
+
             const user = JSON.parse(window.sessionStorage.getItem("user"));
             if (!user) {
                 alert('Por favor, inicia sesión para visualizar tus deudas.');
@@ -99,6 +138,7 @@
                     <option value="trabajo">Trabajo</option>
                     <option value="renta">Renta</option>
                     <option value="inversiones">Inversiónes</option>
+                    <option value="otro">otro</option>
                 </select>
 
                 <label for="monto">Monto:</label>
