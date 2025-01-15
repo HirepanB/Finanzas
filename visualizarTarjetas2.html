@@ -10,6 +10,51 @@
 
         // Cargar los gastos del usuario al cargar la página
         window.onload = () => {
+            const fechaFiltro = document.getElementById('fecha');
+            const saldoFiltro = document.getElementById('saldo');
+            const numeroFiltro = document.getElementById('numero');
+            const bancoFiltro = document.getElementById('banco');
+            const tipoTarjetaFiltro = document.getElementById('tipoTarjeta');
+
+            // Función para filtrar dinámicamente la tabla
+            function aplicarFiltros() {
+                const fechaSeleccionada = fechaFiltro.value;
+                const saldoSeleccionado = saldoFiltro.value;
+                const numeroSeleccionado = numeroFiltro.value;
+                const bancoSeleccionado = bancoFiltro.value.toLowerCase();
+                const tipoTarjetaSeleccionado = tipoTarjetaFiltro.value.toLowerCase();
+
+                // Obtener todas las filas de la tabla
+                const filas = document.querySelectorAll('table tbody tr');
+
+                // Iterar sobre cada fila y aplicar los filtros
+                filas.forEach(fila => {
+                    const numero = fila.children[0].textContent.toLowerCase();
+                    const banco = fila.children[1].textContent.toLowerCase();
+                    const saldo = parseFloat(fila.children[2].textContent.replace('$', ''));
+                    const descripcion = fila.children[3].textContent.toLowerCase();
+                    const fecha = fila.children[4].textContent;
+                    const tipoTarjeta = fila.children[5].textContent.toLowerCase();
+
+                    // Determinar si la fila cumple con los filtros
+                    const coincideNumero = !numeroSeleccionado || numero.includes(numeroSeleccionado);
+                    const coincideBanco = !bancoSeleccionado || banco.includes(bancoSeleccionado);
+                    const coincideSaldo = !saldoSeleccionado || saldo === parseFloat(saldoSeleccionado);
+                    const coincideFecha = !fechaSeleccionada || fecha === fechaSeleccionada;
+                    const coincideTipoTarjeta = tipoTarjetaSeleccionado === '' || tipoTarjeta.includes(tipoTarjetaSeleccionado);
+
+                    // Mostrar u ocultar la fila según los filtros
+                    fila.style.display = coincideNumero && coincideBanco && coincideSaldo && coincideFecha && coincideTipoTarjeta ? '' : 'none';
+                });
+            }
+
+            // Agregar eventos de cambio a los filtros para que apliquen automáticamente
+            fechaFiltro.addEventListener('change', aplicarFiltros);
+            saldoFiltro.addEventListener('input', aplicarFiltros);
+            numeroFiltro.addEventListener('input', aplicarFiltros);
+            bancoFiltro.addEventListener('input', aplicarFiltros);
+            tipoTarjetaFiltro.addEventListener('change', aplicarFiltros);
+
             const user = JSON.parse(window.sessionStorage.getItem("user"));
             if (!user) {
                 alert('Por favor, inicia sesión para visualizar tus deudas.');

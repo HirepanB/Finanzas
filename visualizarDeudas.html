@@ -10,6 +10,35 @@
 
         // Cargar los gastos del usuario al cargar la página
         window.onload = () => {
+            function aplicarFiltros() {
+            const categoriaFiltro = document.getElementById('categoria').value.toLowerCase();
+            const estadoFiltro = document.getElementById('estado').value.toLowerCase();
+
+            const filas = document.querySelectorAll('table tbody tr');
+
+            filas.forEach(fila => {
+                const categoria = fila.children[0].textContent.toLowerCase();
+                const estado = fila.children[2].textContent.toLowerCase();
+
+                let mostrar = true;
+
+                // Comparación parcial para categoría
+                if (categoriaFiltro && categoriaFiltro !== 'todos' && !categoria.includes(categoriaFiltro)) {
+                    mostrar = false;
+                }
+
+                // Comparación parcial para estado
+                if (estadoFiltro && estadoFiltro !== 'todos' && !estado.includes(estadoFiltro)) {
+                    mostrar = false;
+                }
+
+                fila.style.display = mostrar ? '' : 'none';
+            });
+        }
+
+        // Agregar eventos a los inputs del formulario
+        document.getElementById('filtros').addEventListener('input', aplicarFiltros);
+
             const user = JSON.parse(window.sessionStorage.getItem("user"));
             if (!user) {
                 alert('Por favor, inicia sesión para visualizar tus deudas.');
@@ -89,7 +118,7 @@
 <!-- Columna izquierda: Filtros -->
 <aside class="sidebar">
     <h3 style="color: #00509e;">Filtros</h3>
-    <form id="filtros ">
+    <form id="filtros">
         <label for="categoria">Categoría:</label>
         <select id="categoria" name="categoria">
             <option value="todos">Todos</option>
@@ -155,6 +184,5 @@
             // Lógica para editar el adeudo correspondiente
         }
     </script>
-
 </body>
 </html>

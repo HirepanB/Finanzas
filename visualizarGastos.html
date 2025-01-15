@@ -10,6 +10,8 @@
 
         // Cargar los gastos del usuario al cargar la página
         window.onload = () => {
+            document.getElementById('filtros-form').addEventListener('input', aplicarFiltros);
+
             const user = JSON.parse(window.sessionStorage.getItem("user"));
             if (!user) {
                 alert('Por favor, inicia sesión para visualizar tus gastos.');
@@ -79,6 +81,40 @@
             });
         }
 
+        // Aplicar filtros a la tabla directamente en el frontend
+        function aplicarFiltros() {
+        const categoriaFiltro = document.getElementById('categoria').value.toLowerCase();
+        const fechaFiltro = document.getElementById('fecha').value;
+        const montoFiltro = parseFloat(document.getElementById('monto').value) || null;
+
+        const filas = document.querySelectorAll('table tbody tr');
+
+        filas.forEach(fila => {
+            const categoria = fila.children[0].textContent.toLowerCase();
+            const monto = parseFloat(fila.children[1].textContent.replace('$', ''));
+            const fecha = fila.children[2].textContent;
+
+            let mostrar = true;
+
+            if (categoriaFiltro && categoria !== categoriaFiltro) {
+                mostrar = false;
+            }
+
+            if (fechaFiltro && fecha !== fechaFiltro) {
+                mostrar = false;
+            }
+
+            if (montoFiltro && monto < montoFiltro) {
+                mostrar = false;
+            }
+
+            fila.style.display = mostrar ? '' : 'none';
+        });
+    }
+
+        
+
+
         // Función para editar un gasto (pendiente de implementar)
         function editarGasto(id_gasto) {
             alert(`Editar gasto con ID: ${id_gasto}`);
@@ -102,7 +138,7 @@
             <form id="filtros-form">
                 <label for="categoria">Categoría:</label>
                 <select id="categoria" name="categoria">
-                    <option value="todos">Todos</option>
+                    <option value="">Todos</option>
                     <option value="1">Entretenimiento</option>
                     <option value="2">Salud</option>
                 </select>

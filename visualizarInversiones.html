@@ -10,10 +10,39 @@
 
         // Cargar los gastos del usuario al cargar la página
         window.onload = () => {
+            function aplicarFiltros() {
+            const categoriaFiltro = document.getElementById('categoria').value.toLowerCase();
+            const fechaFiltro = document.getElementById('fecha').value;
+
+            const filas = document.querySelectorAll('table tbody tr');
+
+            filas.forEach(fila => {
+                const categoria = fila.children[0].textContent.toLowerCase();
+                const fecha = fila.children[2].textContent;
+
+                let mostrar = true;
+
+                // Comparación parcial para categoría
+                if (categoriaFiltro && categoriaFiltro !== 'todos' && !categoria.includes(categoriaFiltro)) {
+                    mostrar = false;
+                }
+
+                // Comparación exacta para fecha
+                if (fechaFiltro && fecha !== fechaFiltro) {
+                    mostrar = false;
+                }
+
+                fila.style.display = mostrar ? '' : 'none';
+            });
+        }
+
+        // Agregar eventos a los inputs del formulario
+        document.getElementById('filtros').addEventListener('input', aplicarFiltros);
+
             const user = JSON.parse(window.sessionStorage.getItem("user"));
             if (!user) {
                 alert('Por favor, inicia sesión para visualizar tus deudas.');
-                window.location.href = 'login.html';
+                window.location.href =   'login.html';
                 return;
             }
 
@@ -88,7 +117,7 @@
         <!-- Columna izquierda: Filtros -->
         <aside class="sidebar">
             <h3 style="color: #00509e;">Filtros</h3>
-            <form id="filtros ">
+            <form id="filtros">
                 <label for="fecha">Fecha:</label>
                 <input type="date" id="fecha" name="fecha">
 
@@ -135,10 +164,5 @@
             </table>
         </main>
     </div>
-    <div class="button-container">
-        <!---- <button onclick="window.location.href='gastos.html';">Regresar</button>--->
-         <button onclick="alert('Generando reporte...');">Generar Reporte</button>
-     </div>
-
 </body>
 </html>

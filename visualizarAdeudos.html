@@ -10,6 +10,35 @@
 
         // Cargar los gastos del usuario al cargar la página
         window.onload = () => {
+            const categoriaFiltro = document.getElementById('categoria');
+            const estadoFiltro = document.getElementById('estado');
+
+            // Función para filtrar dinámicamente la tabla
+            function aplicarFiltros() {
+                const categoriaSeleccionada = categoriaFiltro.value.toLowerCase();
+                const estadoSeleccionado = estadoFiltro.value.toLowerCase();
+
+                // Obtener todas las filas de la tabla
+                const filas = document.querySelectorAll('table tbody tr');
+
+                // Iterar sobre cada fila y aplicar los filtros
+                filas.forEach(fila => {
+                    const categoria = fila.children[0].textContent.toLowerCase();
+                    const estado = fila.children[2].textContent.toLowerCase();
+
+                    // Determinar si la fila cumple con los filtros
+                    const coincideCategoria = categoriaSeleccionada === 'todos' || categoria.includes(categoriaSeleccionada);
+                    const coincideEstado = estadoSeleccionado === 'todos' || estado.includes(estadoSeleccionado);
+
+                    // Mostrar u ocultar la fila según los filtros
+                    fila.style.display = coincideCategoria && coincideEstado ? '' : 'none';
+                });
+            }
+
+            // Agregar eventos de cambio a los filtros para que apliquen automáticamente
+            categoriaFiltro.addEventListener('change', aplicarFiltros);
+            estadoFiltro.addEventListener('change', aplicarFiltros);
+
             const user = JSON.parse(window.sessionStorage.getItem("user"));
             if (!user) {
                 alert('Por favor, inicia sesión para visualizar tus deudas.');
@@ -102,7 +131,7 @@
         <label for="estado">Estado:</label>
         <select id="estado" name="estado">
             <option value="todos">Todos</option>
-            <option value="porPagar">Por Pagar</option>
+            <option value="por_pagar">Por Pagar</option>
             <option value="pagada">Pagada</option>
             <option value="atrasada">Atrasada</option>
         </select>

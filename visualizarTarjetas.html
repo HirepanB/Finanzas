@@ -10,6 +10,46 @@
 
         // Cargar los gastos del usuario al cargar la página
         window.onload = () => {
+            const fechaFiltro = document.getElementById('fecha');
+            const montoFiltro = document.getElementById('monto');
+            const bancoFiltro = document.getElementById('banco');
+            const numeroFiltro = document.getElementById('numero');
+
+            // Función para filtrar dinámicamente la tabla
+            function aplicarFiltros() {
+                const fechaSeleccionada = fechaFiltro.value;
+                const montoSeleccionado = montoFiltro.value;
+                const bancoSeleccionado = bancoFiltro.value.toLowerCase();
+                const numeroSeleccionado = numeroFiltro.value;
+
+                // Obtener todas las filas de la tabla
+                const filas = document.querySelectorAll('table tbody tr');
+
+                // Iterar sobre cada fila y aplicar los filtros
+                filas.forEach(fila => {
+                    const tarjetaBanco = fila.children[0].textContent.toLowerCase();
+                    const monto = parseFloat(fila.children[1].textContent.replace('$', ''));
+                    const acreedor = fila.children[2].textContent.toLowerCase();
+                    const plazoPago = fila.children[3].textContent.toLowerCase();
+                    const descripcion = fila.children[4].textContent.toLowerCase();
+
+                    // Determinar si la fila cumple con los filtros
+                    const coincideBanco = !bancoSeleccionado || tarjetaBanco.includes(bancoSeleccionado);
+                    const coincideMonto = !montoSeleccionado || monto === parseFloat(montoSeleccionado);
+                    const coincideNumero = !numeroSeleccionado || tarjetaBanco.includes(numeroSeleccionado);
+                    const coincideFecha = !fechaSeleccionada || plazoPago === fechaSeleccionada;
+
+                    // Mostrar u ocultar la fila según los filtros
+                    fila.style.display = coincideBanco && coincideMonto && coincideNumero && coincideFecha ? '' : 'none';
+                });
+            }
+
+            // Agregar eventos de cambio a los filtros para que apliquen automáticamente
+            fechaFiltro.addEventListener('change', aplicarFiltros);
+            montoFiltro.addEventListener('input', aplicarFiltros);
+            bancoFiltro.addEventListener('input', aplicarFiltros);
+            numeroFiltro.addEventListener('input', aplicarFiltros);
+            
             const user = JSON.parse(window.sessionStorage.getItem("user"));
             if (!user) {
                 alert('Por favor, inicia sesión para visualizar tus deudas.');
@@ -98,14 +138,11 @@
                 <label for="monto">Monto:</label>
                 <input type="number" id="monto" name="monto" placeholder="Monto">
 
-                <label for="categoria">Categoría:</label>
-                <select id="categoria" name="categoria">
-                    <option value="empresarial">Todos</option>
-                    <option value="empresarial">Empresarial</option>
-                    <option value="empresarial">Entretenimiento</option>
-                    <option value="financiera">Salud</option>
-                    <option value="participativa">Renta</option>
-                </select>
+                <label for="banco">Banco:</label>
+                <input type="text" id="banco" name="banco" placeholder="banco">
+
+                <label for="numero">Numero:</label>
+                <input type="number" id="numero" name="numero" placeholder="numero" pattern="[0-9]+">
 
                 <button type="submit">Aplicar Filtros</button>
             </form>
