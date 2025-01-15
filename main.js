@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { registerUser, loginUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,getAdeudos,registerIngreso,getIngresos,registerTarjeta,registerPago,getPagos,getTarjetas,registerDeuda,getDeudas,registerPresupuesto,getPresupuestosDetalles} = require('./database'); // Importar todas las funciones necesarias
+const { registerUser, loginUser,editUser, registerGasto, getGastos, registerInversion,getInversiones,registerAdeudo,getAdeudos,registerIngreso,getIngresos,registerTarjeta,registerPago,getPagos,getTarjetas,registerDeuda,getDeudas,registerPresupuesto,getPresupuestosDetalles} = require('./database'); // Importar todas las funciones necesarias
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -41,6 +41,12 @@ ipcMain.on('login-user', (event, { correo, contraseña }) => {
     loginUser(correo, contraseña, (success, message, user) => {
         console.log(success ? 'Login exitoso.' : `Error de login: ${message}`);
         event.reply('login-response', { success, message, user });
+    });
+});
+
+ipcMain.on('edit-user', (event, data) => {
+    editUser(data, (success, message) => {
+        event.reply('edit-user-response', { success, message });
     });
 });
 

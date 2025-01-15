@@ -86,12 +86,20 @@
     <!-- Sección principal -->
     <main class="main-content">
         <h2>Perfil de Usuario</h2>
+        <div id="mensaje-exitoso" style="display: none;">
+            ¡Deuda registrada exitosamente!
+        </div>
         <div class="perfil-info">
-            <p><strong>Nombre:</strong> <span id="name"></span></p>
-            <button onclick="editarNombre()">Editar</button>
+            <form onsubmit="enviarUser(event)">    
+                <p><strong>Nombre:</strong> <input id="name"></p>
+                <br>
 
-            <p><strong>Correo:</strong> <span id="mail"></span></p>
-            <button onclick="editarCorreo()">Editar</button>
+                <p><strong>Correo:</strong> <input id="mail"></p>
+                <br>
+
+                <p><strong>Contraseña:</strong> <input id="contrasena"></p>
+                <button type="submit">Editar</button>
+            </form>
         </div>
         <div class="button-container">
             <button onclick="window.location.href='recucontrasena.html';">Cambiar contraseña</button>
@@ -102,11 +110,64 @@
 <script>
     user = JSON.parse(window.sessionStorage.getItem("user"));
     console.log(user);
-    document.getElementById("name").innerText = user.nombre;
-    user = JSON.parse(window.sessionStorage.getItem("user"));
+    
+    document.getElementById("name").value = user.nombre;
     console.log(user);
-    document.getElementById("mail").innerText = user.correo;
+    document.getElementById("mail").value = user.correo;
 
+    function editarUsuario(e){
+        e.preventDefault();
+
+
+
+    }
+
+         const { ipcRenderer } = require('electron');
+
+        function enviarUser(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+
+            // Recuperar el usuario autenticado
+            const user = JSON.parse(window.sessionStorage.getItem("user"));
+            if (!user) {
+                alert('Por favor, inicia sesión para registrar una deuda.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Obtener los valores del formulario
+            const data = {
+                id_usuario: user.id_usuario,
+                nombre: document.getElementById('name').value,
+                correo: document.getElementById('mail').value,
+                contrasena: document.getElementById('contrasena').value
+            };
+
+            // Escuchar la respuesta del backend
+            ipcRenderer.once('edit-user-response', (event, response) => {
+                if (response.success) {
+                    mostrarMensajeExitoso();
+                    user.nombre=data.nombre;
+                    user.correo=data.correo;
+                    window.sessionStorage.setItem("user",JSON.stringify(user));
+                } else {
+                    alert(`Error: ${response.message}`);
+                }
+            });
+
+            // Enviar los datos al backend
+            ipcRenderer.send('edit-user', data);
+            
+        }
+
+         // Mostrar mensaje de éxito y limpiar formulario
+         function mostrarMensajeExitoso() {
+            const mensaje = document.getElementById('mensaje-exitoso');
+            mensaje.style.display = 'block'; // Mostrar el mensaje
+            setTimeout(() => {
+                mensaje.style.display = 'none'; // Ocultar el mensaje después de 3 segundos
+            }, 2000);
+        }
 
         // Función para editar el nombre
         function editarNombre() {

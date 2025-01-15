@@ -70,6 +70,41 @@ function loginUser(correo, contrasena, callback) {
 }
 
 // Función para registrar un gasto
+function editUser(data, callback) {
+    const sql = `
+        UPDATE Usuarios
+        SET nombre = ?,
+            correo = ?,
+            contrasena = ?
+        WHERE id_usuario = ?
+    `;
+
+
+    bcrypt.hash(data.contrasena, 10, (err, hash) => {
+        if (err) {
+            console.error('Error al generar el hash:', err.message);
+            callback(false, 'Error interno del servidor');
+        } else {
+            db.run(sql, [
+                data.nombre,
+                data.correo,
+                hash,
+                data.id_usuario
+            ], function (err) {
+                if (err) {
+                    console.error('Error al ediar el user:', err.message);
+                    callback(false, err.message);
+                } else {
+                    console.log('ediar el user éxito, ID:', '');
+                    callback(true, 'Usuario registrado con éxito');
+                }
+            });
+        }
+    });
+
+}
+
+// Función para registrar un gasto
 function registerGasto(data, callback) {
     const sql = `
         INSERT INTO Gastos (id_usuario, monto, fecha, descripcion, id_categoria)
@@ -527,7 +562,8 @@ function getPresupuestosDetalles(filtros, callback) {
 module.exports = { 
     db, 
     registerUser, 
-    loginUser, 
+    loginUser,
+    editUser,
     registerGasto, 
     getGastos, 
     registerInversion,
