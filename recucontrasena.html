@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperación de Contraseña</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Manejar el envío del formulario
+        function actualizarContrasena(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+
+            // Obtener los datos del formulario
+            const email = document.getElementById('email').value;
+            const nuevaContrasena = document.getElementById('new-password').value;
+
+            if (email && nuevaContrasena) {
+                // Enviar los datos al backend
+                ipcRenderer.send('update-password', { email, nuevaContrasena });
+
+                // Escuchar la respuesta del backend
+                ipcRenderer.once('update-password-response', (event, response) => {
+                    if (response.success) {
+                        alert('Contraseña actualizada exitosamente.');
+                        document.getElementById('password-form').reset(); // Limpiar el formulario
+                    } else {
+                        alert(`Error: ${response.message}`);
+                    }
+                });
+            } else {
+                alert('Por favor, llena todos los campos.');
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <!-- Columna izquierda con formulario -->
+    <div class="form-container">
+        <h2>Recuperación de Contraseña</h2>
+        <form id="password-form" onsubmit="actualizarContrasena(event);">
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="new-password">Nueva Contraseña:</label>
+            <input type="password" id="new-password" name="new-password" required>
+
+            <button type="submit">Actualizar Contraseña</button>
+        </form>
+        <button onclick="window.location.href='index.html';">Regresar</button>
+    </div>
+
+    <!-- Columna derecha con imagen -->
+    <div class="image-container">
+        <img src="imagenes/gatocontrasena.png" alt="Recuperación de Contraseña" class="sidebar-image">
+    </div>
+</div>
+</body>
+</html>
