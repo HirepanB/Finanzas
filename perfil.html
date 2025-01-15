@@ -94,7 +94,7 @@
             <button onclick="editarCorreo()">Editar</button>
         </div>
         <div class="button-container">
-            <button onclick="cambiarContrasena()">Cambiar la Contraseña</button>
+            <button onclick="window.location.href='recucontrasena.html';">Cambiar contraseña</button>
             <button onclick="eliminarCuenta()">Eliminar Cuenta</button>
         </div>
     </main>
@@ -131,16 +131,6 @@
         window.sessionStorage.setItem("user", JSON.stringify(user)); // Guarda el nuevo correo en sessionStorage
         document.getElementById("mail").innerText = nuevoCorreo; // Actualiza el correo en la interfaz
         alert("Correo actualizado exitosamente.");
-    }
-    }
-
-        // Función para cambiar la contraseña
-        function cambiarContrasena() {
-        const nuevaContrasena = prompt("Introduce la nueva contraseña:");
-        if (nuevaContrasena) {
-        // Aquí puedes enviar la nueva contraseña al backend para actualizarla en la base de datos
-        alert("Contraseña cambiada exitosamente.");
-        // Implementar lógica para enviar la nueva contraseña al backend
     }
     }
 
